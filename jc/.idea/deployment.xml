@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" autoUpload="Always" serverName="jiangqi@10.12.49.199:6666">
+    <serverData>
+      <paths name="jiangqi@10.12.49.199:6666">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/jiangqi/factspace/jc" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="jiangqi@10.12.49.199:6666 (1)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/jiangqi/factspace/jc" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+    <option name="myAutoUpload" value="ALWAYS" />
+  </component>
+</project>

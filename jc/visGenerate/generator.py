@@ -1,20 +1,22 @@
 #!/usr/bin/env python
 # encoding: utf-8
-#@author: jiangqi
-#@license: (C) Copyright 2013-2017, Node Supply Chain Manager Corporation Limited.
-#@contact: jiangqi@zjut.edu.com
-#@file: generator.py
-#@time: 2022/1/9 20:21
-import nl4dv
+# @author: jiangqi
+# @license: (C) Copyright 2013-2017, Node Supply Chain Manager Corporation Limited.
+# @contact: jiangqi@zjut.edu.com
+# @file: generator.py
+# @time: 2022/1/9 20:21
+from utils.constants import vl_attribute_types
+
 
 class Generator:
-    #todo vis Generation
+    # todo vis Generation
     def __init__(self):
         self.vl_spec = dict()
         self.vl_spec['$schema'] = 'https://vega.github.io/schema/vega-lite/v4.json'
         self.vl_spec['mark'] = dict()
         self.vl_spec['encoding'] = dict()
         self.vl_spec['transform'] = list()
+        self.vl_spec['title'] = dict()
         self.bin = False
 
     def set_vis_type(self, vis):
@@ -63,3 +65,68 @@ class Generator:
 
             # Horizontally concatenate each attribute's column (VIS with mark type = text)
             self.vl_spec["hconcat"] = []
+
+    def set_encoding(self, dim, attr, attr_type, aggregate=None):
+
+        self.vl_spec['encoding'][dim] = dict()
+        self.vl_spec['encoding'][dim]['field'] = attr
+        self.vl_spec['encoding'][dim]['type'] = vl_attribute_types[attr_type]
+        self.vl_spec['encoding'][dim]['aggregate'] = aggregate
+
+        if dim == 'x':
+            if self.bin:
+                self.vl_spec['encoding'][dim]['bin'] = True
+
+    def set_data(self, dataUrl):
+        # type: (list) -> None
+        """
+        Set domain data for the visualization
+
+        """
+        self.vl_spec['data'] = {'url': dataUrl, 'format': {'type': 'csv'}}
+
+    def add_tick_format(self):
+        for dim in self.vl_spec['encoding']:
+            if dim in ['x', 'y'] and self.vl_spec['encoding'][dim]['type'] == 'quantitative':
+                if 'axis' not in self.vl_spec['encoding'][dim]:
+                    self.vl_spec['encoding'][dim]['axis'] = dict()
+                self.vl_spec['encoding'][dim]['axis']["format"] = "s"
+
+    def add_tooltip(self):
+        self.vl_spec['mark']['tooltip'] = True
+
+    def get_encoding(self, dim):
+        return self.vl_spec['encoding'][dim]
+
+    def unset_encoding(self, dim):
+        if dim in self.vl_spec['encoding']:
+            del self.vl_spec['encoding'][dim]
+
+    def setSlice(self, slices):
+        filters = []
+        for slice in slices:
+            key = list(slice.keys())[0]
+            value = list(slice.values())[0]
+            filters.append({"field": key, "oneOf": [value]})
+        if len(filters) == 1:
+            self.vl_spec['transform'].append({'filter': filters[0]})
+        else:
+            self.vl_spec['transform'].append({'filter': {'and':filters}})
+
+    def setTitle(self, slices):
+        filters = []
+        for slice in slices:
+            key = list(slice.keys())[0]
+            value = list(slice.values())[0]
+            filters.append(str(key) + " = " + str(value))
+        if len(filters) == 1:
+            self.vl_spec['title']['text'] = filters[0]
+        else:
+            title = ""
+            for i in range(len(filters)):
+                if i == 0:
+                    title = title + filters[i]
+                else:
+                    title = title + ", " + filters[i]
+            self.vl_spec['title']['text'] = title
+        self.vl_spec['title']['align'] = "center"

@@ -1,14 +1,12 @@
-#!/usr/bin/env python
-# encoding: utf-8
-# @author: jiangqi
-# @license: (C) Copyright 2013-2017, Node Supply Chain Manager Corporation Limited.
-# @contact: jiangqi@zjut.edu.com
-# @file: test.py.py
-# @time: 2022/1/10 19:51
-from itertools import combinations
-
-a = [1, 2, 3]
-b = [1]
-for i in list(combinations(a, 2)):
-    print(list(i))
-print(len(set(a) & set(b)))
+from sklearn import datasets
+from sklearn.decomposition import PCA
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+iris = datasets.load_iris()
+print(iris)
+X_reduced = PCA(n_components=2).fit_transform(iris.data,iris.target)
+print(X_reduced)
+kmeans = KMeans(n_clusters=3).fit(X_reduced)
+plt.scatter(X_reduced[:, 0], X_reduced[:, 1], c=kmeans.labels_, cmap=plt.cm.Set1)
+plt.show()
