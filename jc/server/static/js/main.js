@@ -7,9 +7,9 @@
     });
 
     vegaOptMode = {
-	  "actions": true,
+	  "actions": false,
 	  "renderer": "svg",
-	  "hover": true,
+	  "hover": false,
 	  "tooltip": true
 	};
 

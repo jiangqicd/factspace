@@ -54,8 +54,8 @@ class Extractor:
         self.getLabelAttr(attributes)
         print(self.attrLabel)
         self.slice = self.getSubspace()
+        print(len(self.slice))
         self.factData = self.getFactData()
-        print(self.factData)
 
     # 给列属性定义类别
     def getLabelAttr(self, attributes):
@@ -83,9 +83,12 @@ class Extractor:
     # to get subspace set
     def getSubspace(self):
 
+        # Threshold for number of items
+        threshold = 2
+
         slice = []
         # print(self.table['MPG'])
-        # # Equally spaced binning of numeric data
+        # Equally spaced binning of numeric data
         # print(pd.cut(self.table['MPG'],4,labels=['Q1','Q2','Q3','Q4']))
 
         key_list = list(
@@ -93,7 +96,8 @@ class Extractor:
 
         for key in key_list:
             for value in set(list(self.table[key])):
-                slice.append([{key: value}])
+                if self.table.groupby([key]).size()[value] > threshold:
+                    slice.append([{key: value}])
 
         # pairwise combination of properties
         for keyBinary in combinations(key_list, 2):
@@ -105,8 +109,16 @@ class Extractor:
                 valueBinary.append(elements)
             # Pairwise combination of slices
             combin = lambda x: reduce(lambda x, y: [[i, j] for i in x for j in y], x)
-            slice.extend(combin(valueBinary))
-
+            for fs in combin(valueBinary):
+                flag = 0
+                table = self.table
+                for f in fs:
+                    if list(f.keys())[0] in list(table.columns):
+                        table = table[table[list(f.keys())[0]] == list(f.values())[0]]
+                    else:
+                        flag = 1
+                if len(table) > threshold and flag == 0:
+                    slice.append(fs)
         return slice
 
     # Get the data composition space for each data fact
@@ -148,6 +160,7 @@ class Extractor:
 
     def getVisList(self):
         visList = {}
+        # encoding_visList={}
         for factdata in self.factData:
             vis_objects = list()
             # For each combination, there are multiple design solutions, e.g. histogram or strip plot for a "quantitative (Q)" attribute
@@ -163,34 +176,36 @@ class Extractor:
                 # Create reference to a design that matches the attribute combination.
                 design = copy.deepcopy(designSpace[type]["designs"][d_counter])
 
+                task = design["task"]
                 # Generate Vega-Lite specification along with it"s relevance score for the attribute and task combination.
                 vl_genie = self.getVis(design, type, factdata.get('obverAttr'), factdata.get('slice'))
-                visList[str(factdata.get('id')) + '-' + str(d_counter)] = vl_genie.vl_spec
+                visList[str(factdata.get('id')) + '-' + str(d_counter)] = {"task": task, "vis": vl_genie.vl_spec}
+                # encoding_visList[str(factdata.get('id')) + '-' + str(d_counter)] = {"task": task, "vis": vl_genie.vl_spec}
 
-        # Shuffle the data
-        dict_key_ls = list(visList.keys())
-        random.shuffle(dict_key_ls)
-        new_visList = {}
-        for key in dict_key_ls:
-            new_visList[key] = visList.get(key)
+        # # Shuffle the data
+        # dict_key_ls = list(visList.keys())
+        # random.shuffle(dict_key_ls)
+        # new_visList = {}
+        # for key in dict_key_ls:
+        #     new_visList[key] = visList.get(key)
+        # Generate datasets for visualization
+
+        new_visList = json.dumps(visList, indent=4)
+        with open(self.vis_data_path, 'w') as vis_file:
+            vis_file.write(new_visList)
 
         # Generate datasets for variational coding
         with open(self.train_data_path, 'w') as vae_file:
-            for key in new_visList:
-                spec = new_visList.get(key)
+            for key in visList:
+                spec = visList.get(key)["vis"]
 
                 # Delete useless encoding information
-                # del spec["$schema"]
-                # del spec["data"]
-                # del spec["title"]
+                del spec["$schema"]
+                del spec["data"]
+                del spec["title"]
 
-                spec = {key: spec}
+                spec = {key: {"task": visList.get(key)["task"], "vis": spec}}
                 vae_file.write(json.dumps(spec) + "\n")
-
-        # Generate datasets for visualization
-        new_visList = json.dumps(new_visList, indent=4)
-        with open(self.vis_data_path, 'w') as vis_file:
-            vis_file.write(new_visList)
 
     def getVis(self, design, type, obverAttr, slice):
 

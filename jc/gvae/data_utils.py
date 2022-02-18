@@ -29,7 +29,7 @@ def extract_rules(inputfile, outputfile):
             try:
                 line = json.loads(line)
                 for key in line:
-                    specs.append(line.get(key))
+                    specs.append(line.get(key).get("vis"))
             except Exception as e:
                 print(line, e)
 
@@ -61,7 +61,7 @@ def generate_datasets(inputfile, rulesfile, outputdir):
     with open(inputfile, 'r') as inputs:
         for line in inputs:
             rules = []
-            spec = list(json.loads(line).values())[0]
+            spec = list(json.loads(line).values())[0]["vis"]
             vis_vae.get_rules(spec, 'root', rules)
             data.append(rules)
 
@@ -205,31 +205,31 @@ def grammar(rulesfile):
 if __name__ == '__main__':
     # os.chdir('gvae')
 
-    ### Training Pipeline
+    # ## Training Pipeline
     # follow the steps below to train and test the model by commenting and uncommenting the appropriate lines of code
-
-    ## 0. preparation
+    #
+    # # 0. preparation
     # pip install -r requirements.txt
     # mkdir trainingdata
     # mkdir trained
 
-    # ## 1. build the CFG rules file
-    # extract_rules('../data/happiness.txt', 'trainingdata/happiness/rules-cfg.txt')
-    #
-    # ## 2. generate the traning and testing datasets
-    # generate_datasets('../data/happiness.txt', 'trainingdata/happiness/rules-cfg.txt', 'trainingdata/happiness/')
+    ## 1. build the CFG rules file
+    extract_rules('../data/happiness.txt', 'trainingdata/happiness/rules-cfg.txt')
 
-    ## 3. train the model: see train.py
+    ## 2. generate the traning and testing datasets
+    generate_datasets('../data/happiness.txt', 'trainingdata/happiness/rules-cfg.txt', 'trainingdata/happiness/')
+
+    # 3. train the model: see train.py
     # e.g., python train.py --hidden 256 --dense 256 --conv1 8 3 --conv3 8 3 --conv3 8 3 --latent 20
 
     ## 4. test the model performance
-    vaemodel('trainingdata/happiness/rules-cfg.txt', 'trained/happiness/vae_H256_D256_C888_333_L20_B200.hdf5',
-             'trainingdata/happiness/test.h5')
+    # vaemodel('trainingdata/happiness/rules-cfg.txt', 'trained/happiness/vae_H256_D256_C888_333_L20_B200.hdf5',
+    #          'trainingdata/happiness/test.h5')
 
     ## Experimental Code (Optional)
 
     # check if the CFG grammar works properly
-    grammar('trainingdata/happiness/rules-cfg.txt')
+    # grammar('trainingdata/happiness/rules-cfg.txt')
 
     # check if the model works properly
     inputspec = []
@@ -252,7 +252,7 @@ if __name__ == '__main__':
     clustering = DBSCAN(eps=3, min_samples=2).fit(np.array(results))
     print(clustering.labels_)
 
-    # print("z", z)
-    # # visualize the embedding space
-    # np.save('embeddings.npy', z)
-    # visualize_embedding('embeddings.npy', inputspec, './')
+    print("z", z)
+    # visualize the embedding space
+    np.save('embeddings.npy', z)
+    visualize_embedding('embeddings.npy', inputspec, './')

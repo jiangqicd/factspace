@@ -6,9 +6,12 @@
 
     <!--Vendor CSS files-->
     <link src="../static/img/symbol">
+    <link src="../static/img">
     <link src="../static/data">
+    <link src="../static/css/styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap-theme.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap-theme.css"
+          rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
     <link href="https://cdn.datatables.net/rowgroup/1.1.1/css/rowGroup.dataTables.min.css">
@@ -16,9 +19,9 @@
     <link rel="stylesheet" href="//apps.bdimg.com/libs/jqueryui/1.10.4/css/jquery-ui.min.css">
 
     <!--Custom CSS files-->
-    <!--<link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">-->
-    <!--<script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>-->
-    <script src="../static/js/d3.min.js"></script>
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+    <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+<!--    <script src="../static/js/d3.min.js"></script>-->
 </head>
 <body>
 <div class="container-fluid">
@@ -26,140 +29,151 @@
     <!--<br/>-->
     <div class="row">
         <div class="col-md-12" style="background:dodgerblue;height: 40px;">
-            <div class="col-md-1"style="position: center;top: 4px;">
+            <div class="col-md-1" style="position: center;top: 4px;">
             <span class="input-group-btn">
                 <select class="form-control" id="datasetSelect" style="height: 30px;">
-                    <option value="olympic_medals.csv" >Olympic Medals</option>
+                    <option value="olympic_medals.csv">Olympic Medals</option>
                     <option value="movies-w-year.csv">Movies</option>
                     <option value="cars-w-year.csv">Cars</option>
                     <option value="housing.csv">Housing</option>
-                    <option value="colleges.csv" >Colleges</option>
-                    <option value="euro.csv" >Euro</option>
-                    <option value="economic.csv" >Economic</option>
+                    <option value="colleges.csv">Colleges</option>
+                    <option value="euro.csv">Euro</option>
+                    <option value="economic.csv">Economic</option>
                     <option value="bill.csv" selected="selected">Bill</option>
-                     <option value="happiness.csv" >Happiness</option>
+                     <option value="happiness.csv">Happiness</option>
                 </select>
             </span>
             </div>
-            <div class="col-md-10" ><center><h4>Fact space</h4></center></div>
-            <div class="col-md-1"style="padding-top: 2px;padding-left: 80px">
+            <div class="col-md-10">
+                <center><h4>Fact space</h4></center>
+            </div>
+            <div class="col-md-1" style="padding-top: 2px;padding-left: 80px">
                 <button class="btn btn-success " type="button" id="queryBtn">
-                   Submit
+                    Submit
                 </button>
             </div>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-3"style="height:650px; float: left;padding-left: 2px;padding-top: 2px">
+        <div class="col-md-2" style="height:650px; float: left;padding-left: 2px;padding-top: 2px">
             <div class="panel panel-primary">
-	            <div class="panel-heading">
-		              <center><h3 class="panel-title">
-			             Feature selection
-                      </h3></center>
-             	</div>
-                <div style="padding-left: 2px;padding-top: 1px">
-                    <div class="panel panel-success"style="float: left;width: 50%">
-                            <div class="panel-heading">
-		                        <center><h4 class="panel-title">
-			                         Fact type
-                                </h4></center>
-             	            </div>
-                   <div style="height: 52px;padding-bottom: 2px;">
-                        <img src="../static/img/symbol/find_value.png" class="img-responsive"style="max-height: 50px;float: left">
-                         <div class="checkbox"style="padding-top: 12px;">
-                             <label>
-                                 <input type="checkbox"name="fact"value="find_value">find_value
-                             </label>
-                         </div>
-                   </div>
-                   <div style="height: 52px;padding-bottom: 2px">
-                       <img src="../static/img/symbol/rank.png" class="img-responsive"style="max-height: 50px;float: left">
-                       <div class="checkbox"style="padding-top: 12px;">
-                             <label>
-                                 <input type="checkbox"name="fact"value="rank">rank
-                             </label>
-                       </div>
-                   </div>
-                   <div style="height: 52px;padding-bottom: 2px">
-                        <img src="../static/img/symbol/correlation.png" class="img-responsive"style="max-height: 50px;float: left">
-                       <div class="checkbox"style="padding-top: 12px;">
-                             <label>
-                                 <input type="checkbox"name="fact"value="correlation">correlation
-                             </label>
-                       </div>
-                   </div>
-                   <div style="height: 52px;padding-bottom: 2px">
-                        <img src="../static/img/symbol/derived_value.png" class="img-responsive"style="max-height: 50px;float: left">
-                       <div class="checkbox"style="padding-top: 12px;">
-                             <label>
-                                 <input type="checkbox"name="fact"value="derived_value">derived_value
-                             </label>
-                       </div>
-                   </div>
-                   <div style="height: 52px;padding-bottom: 2px">
-                        <img src="../static/img/symbol/difference.png" class="img-responsive"style="max-height: 50px;float: left">
-                       <div class="checkbox"style="padding-top: 12px;">
-                             <label>
-                                 <input type="checkbox"name="fact"value="difference">difference
-                             </label>
-                       </div>
-                   </div>
-                   <div style="height: 52px;padding-bottom: 2px">
-                        <img src="../static/img/symbol/find_extremum.png" class="img-responsive"style="max-height: 50px;float: left">
-                       <div class="checkbox"style="padding-top: 12px;">
-                             <label>
-                                 <input type="checkbox"name="fact"value="extremum">extremum
-                             </label>
-                       </div>
-                   </div>
-                   <div style="height: 52px;padding-bottom: 2px">
-                        <img src="../static/img/symbol/trend.png" class="img-responsive"style="max-height: 50px;float: left">
-                       <div class="checkbox"style="padding-top: 12px;">
-                             <label>
-                                 <input type="checkbox"name="fact"value="trend">trend
-                             </label>
-                       </div>
-                   </div>
-                   <div style="height: 52px;padding-bottom: 2px">
-                        <img src="../static/img/symbol/distribution.png" class="img-responsive"style="max-height: 50px;float: left">
-                       <div class="checkbox"style="padding-top: 12px;">
-                             <label>
-                                 <input type="checkbox"name="fact"value="distribution">distribution
-                             </label>
-                       </div>
-                   </div>
-                   <div style="height: 52px;padding-bottom: 2px">
-                        <img src="../static/img/symbol/proportion.png" class="img-responsive"style="max-height: 50px;float: left">
-                       <div class="checkbox"style="padding-top: 12px;">
-                             <label>
-                                 <input type="checkbox"name="fact"value="proportion">proportion
-                             </label>
-                       </div>
-                   </div>
+                <div class="panel-heading">
+                    <center><h3 class="panel-title">
+                        Feature selection
+                    </h3></center>
                 </div>
-                    <div style="height: 600px;padding-left: 50%">
+                <div style="padding-left: 2px;padding-top: 1px">
+                    <div class="panel panel-success" style="float: left;width: 50%">
+                        <div class="panel-heading">
+                            <center><h4 class="panel-title">
+                                Fact type
+                            </h4></center>
+                        </div>
+                        <div style="height: 5px;padding-bottom: 12px;">
+                            <!--                        <img src="../static/img/symbol/find_value.png" class="img-responsive"style="max-height: 50px;float: left">-->
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="fact" value="find_value">
+                                    <p style="font-size: 14px;font-weight: bold">find_value
+                                </label>
+                            </div>
+                        </div>
+                        <div style="height: 5px;padding-bottom: 12px">
+                            <!--                       <img src="../static/img/symbol/rank.png" class="img-responsive"style="max-height: 50px;float: left">-->
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="fact" value="rank">
+                                    <p style="font-size: 14px;font-weight: bold">rank
+                                </label>
+                            </div>
+                        </div>
+                        <div style="height: 5px;padding-bottom: 12px">
+                            <!--                        <img src="../static/img/symbol/correlation.png" class="img-responsive"style="max-height: 50px;float: left">-->
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="fact" value="correlation">
+                                    <p style="font-size: 14px;font-weight: bold">correlation
+                                </label>
+                            </div>
+                        </div>
+                        <div style="height: 5px;padding-bottom: 12px">
+                            <!--                        <img src="../static/img/symbol/derived_value.png" class="img-responsive"style="max-height: 50px;float: left">-->
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="fact" value="derived_value">
+                                    <p style="font-size: 14px;font-weight: bold">derived_value
+                                </label>
+                            </div>
+                        </div>
+                        <div style="height: 5px;padding-bottom: 12px">
+                            <!--                        <img src="../static/img/symbol/difference.png" class="img-responsive"style="max-height: 50px;float: left">-->
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="fact" value="difference">
+                                    <p style="font-size: 14px;font-weight: bold">difference
+                                </label>
+                            </div>
+                        </div>
+                        <div style="height: 5px;padding-bottom: 12px">
+                            <!--                        <img src="../static/img/symbol/find_extremum.png" class="img-responsive"style="max-height: 50px;float: left">-->
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="fact" value="extremum">
+                                    <p style="font-size: 14px;font-weight: bold">extremum
+                                </label>
+                            </div>
+                        </div>
+                        <div style="height: 5px;padding-bottom: 12px">
+                            <!--                        <img src="../static/img/symbol/trend.png" class="img-responsive"style="max-height: 50px;float: left">-->
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="fact" value="trend">
+                                    <p style="font-size: 14px;font-weight: bold">trend
+                                </label>
+                            </div>
+                        </div>
+                        <div style="height: 5px;padding-bottom: 12px">
+                            <!--                        <img src="../static/img/symbol/distribution.png" class="img-responsive"style="max-height: 50px;float: left">-->
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="fact" value="distribution">
+                                    <p style="font-size: 14px;font-weight: bold">distribution
+                                </label>
+                            </div>
+                        </div>
+                        <div style="height: 5px;padding-bottom: 24px">
+                            <!--                        <img src="../static/img/symbol/proportion.png" class="img-responsive"style="max-height: 50px;float: left">-->
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="fact" value="proportion">
+                                    <p style="font-size: 14px;font-weight: bold">proportion
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="height: 600px;">
                         <div class="panel panel-success">
                             <div class="panel-heading">
-		                        <center><h4 class="panel-title">
-			                         Data attributes
+                                <center><h4 class="panel-title">
+                                    Data attributes
                                 </h4></center>
-             	            </div>
-                            <div class="table-responsive"style="max-height: 550px"id="metaDataTableContainer">
-                                <table class="table"id="Q_attribute">
+                            </div>
+                            <div class="table-responsive" style="max-height: 550px" id="metaDataTableContainer">
+                                <table class="table" id="Q_attribute">
                                     <thead>
                                     <th>Quantitative fields</th>
                                     </thead>
                                     <tbody>
                                     </tbody>
                                 </table>
-                                <table class="table"id="T_attribute">
+                                <table class="table" id="T_attribute">
                                     <thead>
                                     <th>Temporal fields</th>
                                     </thead>
                                     <tbody>
                                     </tbody>
                                 </table>
-                                <table class="table"id="N_attribute">
+                                <table class="table" id="N_attribute">
                                     <thead>
                                     <th>Nominal fields</th>
                                     </thead>
@@ -172,33 +186,42 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6"style="height: 550px;padding-left: 2px;padding-top: 2px">
-              <div class="panel panel-primary">
-	              <div class="panel-heading">
-		              <center><h3 class="panel-title">
-			             Fact scatter view
-                      </h3></center>
-             	  </div>
-                  <div style="height: 600px">
-
-                  </div>
-              </div>
+        <div class="col-md-6" style="height: 550px;padding-left: 2px;padding-top: 2px">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <center><h3 class="panel-title">
+                        Fact scatter view
+                    </h3></center>
+                </div>
+                <div id="scatter" style="height: 600px;">
+                    <div style="position: relative;top: 0;right: 32px;float: right">
+                        <span>logical weight: </span><span id="wl_value">0.5</span>
+                        <input type="range" min="0" max="1" step="0.1" value="0.5" id="wl"
+                               style="width:120px;"/>
+                    </div>
+                    <div style="position: absolute;top: 90px;right: 30px;">
+                        <span>encoding weight: </span><span id="we_value">0.5</span>
+                        <input type="range" min="0" max="1" step="0.1" value="0.5" id="we"
+                               style="width:120px"/>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col-md-3"style="height: 550px;padding-left: 2px;padding-top: 2px">
-              <div class="panel panel-primary">
-	              <div class="panel-heading">
-		              <center><h3 class="panel-title">
-			             Fact visualization view
-                      </h3></center>
-             	  </div>
-                  <div style="height: 600px">
+        <div class="col-md-4" style="height: 550px;padding-left: 2px;padding-top: 2px">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <center><h3 class="panel-title">
+                        Fact visualization view
+                    </h3></center>
+                </div>
+                <div id="visview" style="overflow:auto;height: 600px">
 
-                  </div>
-              </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="row">
-        <div id = "visoverview" class="col-md-12" style="background:dodgerblue;">
+        <div id="visoverview" class="col-md-12" style="background:dodgerblue;">
 
         </div>
     </div>
@@ -212,7 +235,6 @@
 <script src="https://apps.bdimg.com/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <script src="http://cdn.bootcss.com/bootstrap/2.3.1/js/bootstrap-typeahead.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/rowgroup/1.1.1/js/dataTables.rowGroup.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/json-tree-viewer@0.0.1/libs/jsonTree/jsonTree.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
@@ -221,7 +243,6 @@
 
 <script src="../static/js/global.js"></script>
 <script src="../static/js/main.js"></script>
-<script src="../static/js/ui.js"z></script>
+<script src="../static/js/ui.js" z></script>
 <script src="../static/js/utils.js"></script>
-<script type="text/javascript" src="https://assets.pyecharts.org/assets/echarts.min.js"></script>
 </html>

@@ -97,7 +97,7 @@ class VisVAE():
         for i, sentence in enumerate(sentences):
             json_obj = json.loads(sentence)
             id.append(list(json_obj.keys())[0])
-            json_obj = list(json_obj.values())[0]
+            json_obj = list(json_obj.values())[0]["vis"]
             sentence_rules = []
             get_rules(json_obj, 'root', sentence_rules)
             indices = [self.rule2index[r] for r in sentence_rules]
