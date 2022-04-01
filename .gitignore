@@ -3,7 +3,7 @@
 *.DS_Store
 *.hdf5
 *.h5
-
+*.txt
 *.pdf
 
 output/
