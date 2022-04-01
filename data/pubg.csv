@@ -1,0 +1,38 @@
+Weapon Name,Weapon Type,Bullet Type,Damage,Magazine Capacity,Range,Bullet Speed,Rate of Fire,Shots to Kill (Chest),Shots to Kill (Head),Damage Per Second,Fire Mode,BDMG_3,HDMG_3
+Groza,Assault Rifle,7.62,49,30,400,715,0.08,4,2,612,"Single, Automatic, Burst",22,51.8
+AKM,Assault Rifle,7.62,49,30,400,710,0.01,4,2,490,"Single, Automatic",22,51.8
+M762,Assault Rifle,7.62,47,30,400,715,0.086,4,2,547,"Single, Automatic, Burst",21.1,49.7
+MK47 Mutant,Assault Rifle,7.62,49,30,500,715,0.01,4,2,490,"Single, Burst",22,51.8
+AUG A3,Assault Rifle,5.56,43,30,600,880,0.086,4,2,502,"Single, Automatic",19.3,45.4
+SCAR-L,Assault Rifle,5.56,43,30,600,880,0.096,4,2,448,"Single, Automatic",19.3,45.4
+M416,Assault Rifle,5.56,43,30,600,890,0.086,4,2,502,"Single, Automatic",19.3,45.4
+M16A4,Assault Rifle,5.56,43,30,600,900,0.01,4,2,430,"Single, Burst",19.3,45.4
+G36C,Assault Rifle,5.56,43,30,600,880,0.086,4,2,502,"Single, Automatic",19.3,45.4
+OBZ,Assault Rifle,5.56,43,30,600,880,0.096,4,2,466,"Single, Automatic",19.3,45.4
+M249,Light Machine Gun,5.56,45,100,400,915,0.075,4,2,600,Automatic,20.2,46.5
+DP-28,Light Machine Gun,7.62,51,47,600,715,0.109,4,2,468,Automatic,22.9,52.7
+Vector,Submachine Gun,9,31,19,50,300,0.055,5,3,569,"Single, Automatic, Burst",13.9,25.1
+Uzi,Submachine Gun,9,26,25,200,350,0.048,7,4,542,"Single, Automatic",11.7,21
+PP-Bizon,Submachine Gun,9,35,53,300,300,0.076,5,3,408,"Single, Automatic",15.7,28.3
+MP5K,Submachine Gun,9,33,30,200,330,0.0645,5,3,495,"Single, Automatic, Burst",14.8,26.7
+Thompson,Submachine Gun,0.45,40,30,200,280,0.086,5,3,467,"Single, Automatic",18,32.4
+UMP45,Submachine Gun,0.45,39,25,300,250,0.092,5,3,423,"Single, Automatic, Burst",17.5,31.5
+S686,Shotgun,12,216,2,25,370,0.2,1,1,1080,Automatic,93.6,140.4
+S1897,Shotgun,12,216,5,25,360,0.7,1,1,288,Automatic,91.8,137.7
+S12K,Shotgun,12,198,5,25,350,0.25,1,1,792,Automatic,126.9,84.6
+MK14,Designed Marksman Rifle,7.62,61,10,800,853,0.09,3,2,678,"Single, Automatic",28.8,64.5
+SLR,Designed Marksman Rifle,7.62,56,10,800,835,0.01,3,2,580,Automatic,27.4,61.3
+SKS,Designed Marksman Rifle,7.62,53,10,800,800,0.01,3,2,530,Automatic,25,56
+QBU,Designed Marksman Rifle,5.56,48,10,800,800,0.01,3,2,480,Automatic,22.6,50.7
+Mini14,Designed Marksman Rifle,5.56,46,20,700,990,0.01,3,2,460,Automatic,21.7,48.6
+VSS,Designed Marksman Rifle,9,41,10,500,300,0.01,3,2,479,Automatic,19.3,43.3
+AWM,Sniper Rifle,0.3,105,5,900,910,1.85,2,1,65,Single,61.4,118.1
+M24,Sniper Rifle,7.62,79,5,800,790,1.8,2,1,44,Single,39.1,89
+Kar98,Sniper Rifle,7.62,75,5,800,760,1.9,2,1,39,Single,46.2,88.8
+Win94,Sniper Rifle,0.45,66,5,600,710,0.6,2,2,110,Single,32.6,74.2
+Sawed-Off,Pistol,12,160,2,25,330,0.25,2,1,640,Automatic,71.2,107.2
+R1895,Pistol,7.62,55,7,25,330,0.4,4,2,137.51,Automatic,24.6,49.3
+R45,Pistol,0.45,55,6,25,350,0.25,4,2,220,Automatic,24.6,49.3
+P1911,Pistol,0.45,41,15,25,250,0.11,5,3,373,Automatic,18.2,36.5
+P92,Pistol,9,35,7,25,380,0.14,5,3,259,Automatic,15.5,31.1
+P18C,Pistol,9,23,17,25,375,0.06,8,4,383,Automatic,10.1,20.2

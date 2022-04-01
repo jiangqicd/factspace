@@ -1,0 +1,483 @@
+body {
+    font-size: 16px;
+}
+.loadingModal {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 )
+    url('../img/loading.gif')
+    50% 50%
+    no-repeat;
+}
+/* When the body has the loading class, we turn
+   the scrollbar off with overflow:hidden */
+body.loading {
+    overflow: hidden;
+}
+
+/* Anytime the body has the loading class, our
+   modal element will be visible */
+body.loading .loadingModal {
+    display: block;
+}
+.link,
+.link:hover {
+    color: inherit;
+    text-decoration: none;
+}
+
+.card-interactive:hover {
+    background: #e1f5fe !important;
+}
+
+.img-wrapper {
+    overflow: hidden;
+    height: 200px;
+}
+
+.img-wrapper img {
+    margin-top: 0;
+    -webkit-transition: .3s ease-in-out;
+    transition: .3s ease-in-out;
+    width: 100%;
+    height: 250px;
+}
+
+.card:hover .img-wrapper img {
+    margin-top: -50px;
+}
+
+.point {
+    fill: Navy;
+    stroke: #000;
+    stroke-width: 1px;
+}
+
+.container {
+    width: 200px;
+    height: 200px;
+    border: 1px solid #343aa9;
+    position: relative;
+    white-space: pre;
+}
+
+.content {
+    position: relative;
+    top: 35px;
+}
+
+.add {
+    width: 280px;
+    height: 280px;
+    float: left;
+    opacity: 0.2;
+}
+
+.add:hover {
+    opacity: 1;
+    cursor: pointer;
+}
+
+.location {
+    max-width: 35px;
+    max-height: 35px;
+}
+
+.location:hover {
+    opacity: 1;
+    cursor: pointer;
+}
+
+.dialog {
+    position: relative;
+    z-index: 1;
+    width: 300px;
+    height: 320px;
+    border: 2px solid #CCC;
+    text-align: center;
+    font-size: 14px;
+    background-color: #F4F4F4;
+    overflow: auto;
+    float: left;
+    left: 2px;
+    display: inline;
+}
+.dialogstory {
+    position: relative;
+    z-index: 1;
+    width: 290px;
+    height: 320px;
+    border: 2px solid #CCC;
+    text-align: center;
+    font-size: 14px;
+    background-color: #F4F4F4;
+    overflow: auto;
+    float: left;
+    left: 2px;
+    margin: 2px;
+    display: inline;
+}
+.dialogadd {
+    position: relative;
+    z-index: 1;
+    width: 550px;
+    height: 550px;
+    border: 2px solid #CCC;
+    text-align: center;
+    font-size: 14px;
+    background-color: #F4F4F4;
+    overflow: auto;
+    float: left;
+    left: 2px;
+    margin: 2px;
+    display: inline;
+}
+
+
+.dialogpath {
+    position: relative;
+    z-index: 1;
+    width: 300px;
+    height: 320px;
+    border: 2px solid #CCC;
+    text-align: center;
+    font-size: 14px;
+    background-color: #F4F4F4;
+    overflow: auto;
+    left: 50px;
+}
+.dialogpathsearch {
+    position: relative;
+    z-index: 1;
+    width: 440px;
+    height: 460px;
+    border: 2px solid #CCC;
+    text-align: center;
+    font-size: 14px;
+    background-color: #F4F4F4;
+    overflow: auto;
+    left: 50px;
+}
+
+.closeimg {
+    position: absolute;
+    max-width: 35px;
+    max-height: 35px;
+    top: 0;
+    right: 0;
+}
+
+.close {
+    position: absolute;
+    max-width: 35px;
+    max-height: 35px;
+    top: 0;
+    right: 0;
+}
+
+.editor {
+    position: absolute;
+    max-width: 30px;
+    max-height: 30px;
+    top: 0;
+    right: 35px;
+    opacity: 0.2;
+}
+
+.editor:hover {
+    opacity: 1;
+    cursor: pointer;
+}
+
+.story {
+    position: absolute;
+    max-width: 30px;
+    max-height: 30px;
+    top: 0;
+    right: 65px;
+    opacity: 0.2;
+}
+
+.story:hover {
+    opacity: 1;
+    cursor: pointer;
+}
+.left {
+    position: absolute;
+    max-width: 30px;
+    max-height: 30px;
+    top: 0;
+    right: 95px;
+    opacity: 0.2;
+}
+
+.left:hover {
+    opacity: 1;
+    cursor: pointer;
+}
+.right {
+    position: absolute;
+    max-width: 30px;
+    max-height: 30px;
+    top: 0;
+    right: 60px;
+    opacity: 0.2;
+}
+
+.right:hover {
+    opacity: 1;
+    cursor: pointer;
+}
+.tooltip {
+    position: absolute;
+    font-size: 14px;
+    text-align: left;
+    background-color: #F4F4F4;
+    border-radius: 3px;
+    box-shadow: rgb(174, 174, 174) 0px 0px 10px;
+    cursor: pointer;
+    display: inline-block;
+    padding: 10px;
+}
+
+.tooltip > div {
+    padding: 10px;
+}
+
+.message {
+    position: absolute;
+    max-width: 100px;
+    max-height: 20px;
+    background-color: #CCC;
+    top: 0;
+    left: 0;
+    font-weight: bold;
+    color: red;
+}
+
+.node rect {
+    cursor: move;
+    fill-opacity: .9;
+    shape-rendering: crispEdges;
+}
+
+.node text {
+    pointer-events: none;
+    text-shadow: 0 1px 0 #fff;
+}
+
+.link {
+    fill: none;
+    stroke: #000;
+    stroke-opacity: .2;
+}
+
+.link:hover {
+    stroke-opacity: .5;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+
+    stroke: black;
+
+    shape-rendering: crispEdges;
+
+}
+
+.axis text {
+    font-family: 'Microsoft YaHei';
+    text-overflow: ellipsis;
+    font-size: 12px;
+
+}
+
+.text {
+    font-family: sans-serif;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    text-anchor: middle;
+}
+
+a {
+    text-decoration: none;
+    outline: none;
+}
+
+a:hover {
+    text-decoration: none;
+    text-underline: none;
+}
+
+img {
+    border: 0
+}
+
+ul, li {
+    list-style: none;
+}
+
+i {
+    font-style: normal;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0
+}
+
+button {
+    cursor: pointer;
+}
+
+/*公共样式结束*/
+
+.timer-shaft-box {
+    width: 100%;
+    padding: 30px 40px;
+    box-sizing: border-box;
+}
+
+.timer-shaft {
+    position: relative;
+    width: 100%;
+    height: 80px;
+    overflow: hidden;
+}
+
+.timer-scale {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 80px;
+    padding-left: 80px;
+    font-size: 0;
+    white-space: nowrap;
+}
+
+.timer-scale-cont {
+    display: inline-block;
+    height: 100%;
+    line-height: 80px;
+}
+
+.time-circle {
+    display: inline-block;
+    vertical-align: middle;
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    text-align: center;
+    font-size: 18px;
+    color: #fff;
+    border-radius: 50%;
+    background: #e2302e;
+    transition: all .3s;
+    cursor: pointer;
+}
+
+.timer-scale-cont.hov .time-circle {
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    font-size: 24px;
+    background: #ff8d3d;
+}
+
+.timer-shaft-content {
+    width: 100%;
+    margin-top: 45px;
+    overflow: hidden;
+    font-size: 0;
+    box-sizing: border-box;
+    white-space: nowrap;
+}
+
+.shaft-detail-cont {
+    display: none;
+    width: 100%;
+}
+
+.timer-year {
+    padding-left: 20px;
+    font-weight: bold;
+    color: #333;
+    font-size: 0;
+}
+
+.icon-year {
+    display: inline-block;
+    vertical-align: middle;
+    width: 33px;
+    height: 40px;
+    background: url(../img/icon_sign.png) no-repeat;
+    background-size: cover;
+}
+
+.timer-year span {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 18px;
+    font-size: 24px;
+}
+
+.month-detail-box {
+    position: relative;
+    width: 100%;
+    min-height: 93px;
+    padding-top: 30px;
+    font-size: 0;
+    box-sizing: border-box;
+    white-space: normal;
+}
+
+.month-detail-box:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 36.5px;
+    height: 100%;
+    border-right: 1px dashed #ff8d3d;
+}
+
+.month-detail-box .month-title {
+    position: absolute;
+    font-size: 13px;
+    font-weight: bold;
+    color: #333;
+}
+
+.month-detail-box .month-title:before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 30px;
+    width: 13px;
+    height: 13px;
+    margin-top: 6.5px;
+    background: url(../img/icon_circle.png) no-repeat;
+    background-size: cover;
+}
+
+.incident-record {
+    display: inline-block;
+    padding-left: 71px;
+    line-height: 2;
+    font-size: 14px;
+    color: #333;
+}
+
+.incident-record a {
+    font-size: 14px;
+    color: #1d69a3;
+}
+
+
+
+

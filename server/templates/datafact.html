@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fact space</title>
+
+    <!--Vendor CSS files-->
+    <link src="../static/img/symbol">
+    <link src="../static/img/loading.gif">
+    <link src="../static/img">
+    <link src="../static/data">
+    <link src="../static/css/sk.d3.min.css">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap-theme.css"
+          rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+    <link href="https://cdn.datatables.net/rowgroup/1.1.1/css/rowGroup.dataTables.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/json-tree-viewer@0.0.1/libs/jsonTree/jsonTree.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="//apps.bdimg.com/libs/jqueryui/1.10.4/css/jquery-ui.min.css">
+
+    <!--Custom CSS files-->
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/sk.d3.min.css') }}" rel="stylesheet">
+    <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+    <!--    <script src="../static/js/d3.min.js"></script>-->
+</head>
+<body>
+<div class="container-fluid">
+    <!--<center><h3>Fact space</h3></center>-->
+    <!--<br/>-->
+    <div class="row">
+        <div class="col-md-12" style="background:dodgerblue;height: 40px;">
+            <div class="col-md-1" style="position: center;top: 4px;">
+            <span class="input-group-btn">
+                <select class="form-control" id="datasetSelect" style="height: 30px;">
+                    <option value="olympic_medals.csv">Olympic Medals</option>
+                    <option value="entrepreneurship.csv">Entrepreneurship</option>
+                    <option value="movies-w-year.csv">Movies</option>
+                    <option value="cars-w-year.csv">Cars</option>
+                    <option value="housing.csv">Housing</option>
+                    <option value="colleges.csv">Colleges</option>
+                    <option value="euro.csv">Euro</option>
+                    <option value="economic.csv">Economic</option>
+                    <option value="bill.csv">Bill</option>
+                    <option value="pubg.csv">Pubg</option>
+                     <option value="happiness.csv" selected="selected">Happiness</option>
+                </select>
+            </span>
+            </div>
+            <div class="col-md-11" style="padding-top: 2px;">
+                <button type="button" id="queryStoryline" style="height: 35px;color: #b3de69;float: left">
+                    Storyline
+                </button>
+                <div style="float: left;padding-top: 5px;padding-left: 10px;">
+                    <label style="color: #cad3d0;float: left;font-size: 18px">Expansion:</label>
+                </div>
+                <div style="float: left;padding-top: 5px;padding-left: 5px;">
+                    <input type="checkbox" style="width: 15px;height: 15px;" name="distance" id="low">
+                    <label style="font-size: 15px;color: #8dd3c7">Low</label>
+                </div>
+                <div style="float: left;padding-left: 5px;padding-top: 5px">
+                    <input type="checkbox" style="width: 15px;height: 15px;" name="distance" id="medium">
+                    <label style="font-size: 15px;color: #8dd3c7">Medium</label>
+                </div>
+                <div style="float: left;padding-left: 5px;padding-top: 5px">
+                    <input type="checkbox" style="width: 15px;height: 15px;" name="distance" id="high">
+                    <label style="font-size: 15px;color: #8dd3c7">High</label>
+                </div>
+                <div style="float: left;padding-left: 5px;padding-top: 5px">
+                    <label style="color: #cad3d0;float: left;font-size: 18px">P:</label>
+                    <input id="custom" type="text" name="custom perspective" value="44-0"
+                           style="width: 60px">
+                </div>
+                <div style="float: left;padding-left: 10px;padding-top: 5px">
+                    <label style="color: #cad3d0;float: left;font-size: 18px">Attribute_1:</label>
+                    <span>
+                         <select id="attributes1Select" style="height: 30px;width:120px;float: left"></select>
+                     </span>
+                </div>
+                <div style="float: left;padding-left: 5px;padding-top: 5px">
+                    <label style="color: #cad3d0;float: left;font-size: 18px">Attribute_2:</label>
+                    <span>
+                         <select id="attributes2Select" style="height: 30px;width:120px;float: left"></select>
+                     </span>
+                </div>
+                <div style="float: left;padding-left: 5px;padding-top: 5px">
+                    <label style="color: #cad3d0;float: left;font-size: 18px">Subspace:</label>
+                    <span>
+                         <select id="subspaceSelect" style="height: 30px;width:120px;float: left"></select>
+                     </span>
+                </div>
+                <div style="float: left;padding-left: 5px;padding-top: 5px">
+                    <label style="color: #cad3d0;float: left;font-size: 18px">Task:</label>
+                    <span>
+                         <select id="tasksSelect" style="height: 30px;width:120px;float: left"></select>
+                     </span>
+                </div>
+                <div style="float: left;padding-left: 5px;padding-top: 5px">
+                    <label style="color: #cad3d0;float: left;font-size: 18px">Score:</label>
+                    <span>
+                         <select id="scoreSelect" style="height: 30px;width:120px;float: left"></select>
+                     </span>
+                </div>
+                <div style="float: left;padding-left: 5px;padding-top: 5px">
+                    <label style="color: #cad3d0;float: left;font-size: 18px">ID:</label>
+                    <input id="idsearch" type="text" name="custom perspective" value="44-0"
+                           style="width: 60px">
+                </div>
+                <div style="float: left;padding-top: 5px;padding-left: 5px;">
+                    <button type="button" id="fliter" style="height: 30px;color: #384ade;float: left">
+                        Filter
+                    </button>
+                    <button type="button" id="remove" style="height: 30px;color: #384ade;float: left">
+                        Remove
+                    </button>
+                </div>
+                <div style="padding-left: 100px;float: left">
+                 <button class="btn btn-success " type="button" id="queryBtn">
+                    Submit
+                </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2" style="height:650px; float: left;padding-left: 2px;padding-top: 2px">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <center><h3 class="panel-title">
+                        Navigation
+                    </h3></center>
+                </div>
+                <div style="height: 150px;border:1px solid #ADADAD;">
+                    <span class="title" style="font-weight:bold">task distribution</span>
+                     <div id="task_dis"></div>
+                </div>
+                <div style="height: 150px;border:1px solid #ADADAD">
+                    <span class="title" style="font-weight:bold">mark distribution</span>
+                    <div id="vis_dis"></div>
+                </div>
+                <div style="height:80px;border:1px solid #ADADAD;">
+                    <span style="font-weight:bold">logical weight: </span><span id="wl_value">0.5</span>
+                    <input type="range" min="0" max="1" step="0.1" value="0.5" id="wl"
+                           style="width:250px;position: relative;left: 30px;top: 15px"/>
+                </div>
+                <div style="height:80px;border:1px solid #ADADAD;">
+                    <span style="font-weight:bold">encoding weight: </span><span id="we_value">0.5</span>
+                    <input type="range" min="0" max="1" step="0.1" value="0.5" id="we"
+                           style="width:250px;position: relative;left: 30px;top: 15px"/>
+                </div>
+                <div id="chartview" style="border:1px solid #ADADAD;"></div>
+                <div id="charteditor" style="border:1px solid #ADADAD;">
+                    <div id="chartcomposer">
+                        <label>Mark</label><select id="ch-mark"></select><br/>
+                        <label>X</label><select id="ch-x"></select><select id="ch-xtrans"></select><br/>
+                        <label>Y</label><select id="ch-y"></select><select id="ch-ytrans"></select><br/>
+                        <label>Color</label><select id="ch-color"></select><select id="ch-colortrans"></select><br/>
+                        <label>Theta</label><select id="ch-theta"></select><select id="ch-thetatrans"></select><br/>
+                        <label>Shape</label><select id="ch-shape"></select><br/>
+                    </div>
+                    <span class="editorbuttons">
+                        <button id="confirm" style="color:#5BFF0C">Confirm</button>
+                        <button id="cancel" style="color:#dc3545;">Cancel</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7" style="height: 550px;padding-left: 2px;padding-top: 2px">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <center><h3 class="panel-title">
+                        Fact overview
+                    </h3></center>
+                </div>
+                <div id="box" style=" width: 1217px; height: 1000px;overflow: hidden;">
+                    <div id="scatter" style="height: calc(60% - 5px);width: 100%"></div>
+                    <div id="resize"
+                         style="cursor: ns-resize;height: 5px;width:100%;background-color: #3072AB;z-index: 999"></div>
+                    <div id="show_storyline"
+                         style="width:100%;height: 40%;overflow-x:auto;">
+                        <div id="storyline" style="border:1px solid #3072AB;"></div>
+                        <img src="../static/img/add.png" id="add_new_node" class="add" data-toggle="modal"
+                             data-target="#myModal">
+                        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content" style="height: 900px">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                            &times;
+                                        </button>
+                                        <h4 class="modal-title" id="myModalLabel">
+                                            Select the fact nodes you want to add!
+                                        </h4>
+                                    </div>
+                                    <div class="modal-body" id="addmune" style="height: 770px">
+                                        <div style="border-bottom: 2px solid #ADADAD;">
+                                            <label style="color: #82AC63;position:relative;bottom: 5px">Selected
+                                                fact</label>
+                                            <input id="selected_fact_id" type="text" name="encoding"
+                                                   style="position:relative;width: 440px;left: 20px;bottom: 5px">
+                                        </div>
+                                        <div style="border-bottom: 2px solid #ADADAD;position: relative;top: 30px;">
+                                            <label style="color: #5558AC;position:relative;bottom: 5px;">Search fact by
+                                                id</label>
+                                            <label style="color: #5558AC;position:relative;bottom: 5px;left: 90px;">Fact
+                                                ID</label>
+                                            <input id="search_fact_by_id" type="text" name="encoding" value="14-0"
+                                                   style="position:relative;width: 60px;left: 90px;bottom: 5px;">
+                                            <button
+                                                    style="width:60px;height: 30px;position: relative;left: 245px;bottom: 5px;color: #5558AC"
+                                                    type="button" id="searchid">
+                                                Search
+                                            </button>
+                                        </div>
+                                        <div style="border-bottom: 2px solid #ADADAD;position: relative;top: 60px;height: 55px">
+                                            <label style="color: #6FAAAC;position:relative;bottom: 5px;float: left">Task</label>
+                                            <div class="checkbox"
+                                                 style="float: left;position:relative;left:30px;bottom: 15px;">
+                                                <label>
+                                                    <input type="checkbox" name="fact" value="distribution">
+                                                    <p style="font-size: 14px;font-weight: bold;color: #ADADAD">
+                                                        Distribution
+                                                </label>
+                                            </div>
+                                            <div class="checkbox" style="float: left;position:relative;left:60px;">
+                                                <label>
+                                                    <input type="checkbox" name="fact" value="proportion">
+                                                    <p style="font-size: 14px;font-weight: bold;color: #ADADAD">
+                                                        Proportion
+                                                </label>
+                                            </div>
+                                            <div class="checkbox" style="float: left;position:relative;left:90px;">
+                                                <label>
+                                                    <input type="checkbox" name="fact" value="derived_value">
+                                                    <p style="font-size: 14px;font-weight: bold;color: #ADADAD">
+                                                        Derived_value
+                                                </label>
+                                            </div>
+                                            <br/>
+                                            <div class="checkbox"
+                                                 style="float: left;position:absolute;left:65px;top: 5px">
+                                                <label>
+                                                    <input type="checkbox" name="fact" value="extremum">
+                                                    <p style="font-size: 14px;font-weight: bold;color: #ADADAD">Extremum
+                                                </label>
+                                            </div>
+                                            <div class="checkbox" style="float: left;position:absolute;left:200px;">
+                                                <label>
+                                                    <input type="checkbox" name="fact" value="trend">
+                                                    <p style="font-size: 14px;font-weight: bold;color: #ADADAD">Trend
+                                                </label>
+                                            </div>
+                                            <div class="checkbox" style="float: left;position:absolute;left:300px;">
+                                                <label>
+                                                    <input type="checkbox" name="fact" value="correlation">
+                                                    <p style="font-size: 14px;font-weight: bold;color: #ADADAD">
+                                                        Correlation
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <button
+                                                style="width:60px;height: 30px;position: relative;left: 500px;top: 5px;color: #6FAAAC"
+                                                type="button" id="fliterid">
+                                            Fliter
+                                        </button>
+                                        <label style="color: #AC6842;position:absolute;top: 200px;right: 515px">Data
+                                            fact</label>
+                                        <div style="border: 2px solid #ADADAD;position:relative;top: 65px;height: 500px;overflow-y: auto"
+                                             id="story_add_fact_view">
+
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" id="cancel_facts"
+                                                data-dismiss="modal">Cancel
+                                        </button>
+                                        <button type="button" class="btn btn-primary" id="submit_facts"
+                                                data-dismiss="modal">
+                                            Submit
+                                        </button>
+                                    </div>
+                                </div><!-- /.modal-content -->
+                            </div><!-- /.modal -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3" style="height: 1000px;padding-left: 2px;padding-top: 2px">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <center><h3 class="panel-title">
+                        Storyline Search
+                    </h3></center>
+                </div>
+                <div id="searchview" style="overflow:auto;height: 1000px">
+                    <label>Input fact source and fact target:</label>
+                    <div style="padding-top:10px;float: left;display: inline;">
+                        <div style="float: left;display: inline">
+                            <label style="color: #beaed4">Encoding:</label>
+                            <img src="../static/img/encoding.png" style="max-width: 30px;max-height: 30px">
+                            <input id="encoding" type="text" name="encoding" value="0.5" style="width: 40px"><br/>
+                        </div>
+                        <div style="float: left;display: inline;padding-left: 5px">
+                            <label style="color: #fdc086">Logical:</label>
+                            <img src="../static/img/logic.png" style="max-width: 30px;max-height: 30px">
+                            <input id="logical" type="text" name="logical" value="0.5" style="width: 40px"><br/>
+                        </div>
+                        <div style="float: left;display: inline;padding-left: 5px">
+                            <label style="color: #ffd92f">Score:</label>
+                            <img src="../static/img/score.png" style="max-width: 30px;max-height: 30px">
+                            <input id="score" type="text" name="score" value="0.5" style="width: 40px"><br/>
+                        </div>
+                    </div>
+                    <div style="padding-top:10px;float: left;display: inline;border-bottom: 3px solid #ADADAD;">
+                        <div style="float: left;display: inline">
+                            <label style="color: #7fc97f">Source:</label>
+                            <img src="../static/img/start.png" style="max-width: 30px;max-height: 30px">
+                            <input id="start_fact" type="text" name="start" value="14-0" style="width: 80px"><br/>
+                        </div>
+                        <div style="float: left;display: inline;padding-left: 10px">
+                            <label style="color: #f0027f">Target:</label>
+                            <img src="../static/img/end.png" style="max-width: 30px;max-height: 30px">
+                            <input id="end_fact" type="text" name="end" value="44-0" style="width: 80px"><br/>
+                        </div>
+                        <div style="float: left;padding-left: 20px">
+                            <button class="btn btn-default " style="height: 30px" type="button" id="search">
+                                Go
+                            </button>
+                        </div>
+
+                    </div>
+                    <div class="timer-shaft-content">
+                        <div class="shaft-detail-cont" id="search_result_show" style="display: block;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="loadingModal">
+    </div>
+</div>
+</body>
+
+<!--JS files-->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://apps.bdimg.com/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="http://cdn.bootcss.com/bootstrap/2.3.1/js/bootstrap-typeahead.min.js"></script>
+<script src="https://cdn.datatables.net/rowgroup/1.1.1/js/dataTables.rowGroup.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/json-tree-viewer@0.0.1/libs/jsonTree/jsonTree.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-lite@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+<script src="../static/js/lib.js"></script>
+<script src="../static/js/click.js"></script>
+<script src="../static/js/navigation.js"></script>
+<script src="../static/js/sankey.js"></script>
+<script src="../static/js/global.js"></script>
+<script src="../static/js/main.js"></script>
+<script src="../static/js/ui.js" z></script>
+<script src="../static/js/utils.js"></script>
+</html>
