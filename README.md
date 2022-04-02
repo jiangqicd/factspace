@@ -8,9 +8,9 @@ In FactExplorer, what users need to do is not low-level data analysis, but advan
 FactExplorer, a system designed to help users efficiently and conveniently explore and analyze fact space. In this system, entire facts are automatically extracted from tabular data. A two-factor (visual style and contextual logic) fact embedding approach is introduced to embed facts into the fact space, which provides an overview of all facts and the context of each fact. A multi-perspective storyline generation algorithm is also designed to generate multiple perspectives storylines. The whole facts are well organized to promote exploration and deepen the impression of the fact space for users. Certain interactive components are also implemented to support users to flexibly edit facts and storylines.
 
 ## **Function description**
-1. Data fact Extraction
+1. ##### Data fact Extraction
 
-   select PUBG’s firearm performance statistics data  as the analysis example.
+   ###### select PUBG’s firearm performance statistics data  as input data
 
    | Weapon Name |  Weapon Type   | ...  | Bullet Speed | ...  | HDMG_3 |
    | :---------: | :------------: | :--: | :----------: | :--: | :----: |
@@ -19,87 +19,97 @@ FactExplorer, a system designed to help users efficiently and conveniently explo
    |     ...     |      ...       | ...  |     ...      | ...  |  ...   |
    |     AWM     |  Sniper Rifle  | ...  |     910      | ...  | 118.1  |
 
+   ###### Extract data facts via extractor.py
+
+    "794-0"  is the id number of each fact, "task"  indicates the fact type, "vis" indicates the fact visualization expression, and  "text" indicates the fact text description
+
    ```json
-   "vis": {
-       "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
-       "mark": {
-           "type": "point",
-           "tooltip": true
-       },
-       "encoding": {
-           "x": {
-               "field": "Shots to Kill (Chest)",
-               "type": "quantitative",
-               "aggregate": null,
-               "axis": {
-                   "format": "s"
-               }
-           },
-           "y": {
-               "field": "Damage",
-               "type": "quantitative",
-               "aggregate": null,
-               "axis": {
-                   "format": "s"
-               }
-           },
-           "color": {
-               "field": "Bullet Speed",
-               "type": "quantitative",
-               "aggregate": null
-           }
-       },
-       "transform": [
-           {
-               "filter": {
-                   "and": [
-                       {
-                           "field": "Damage",
-                           "range": [
-                               23,
-                               79
-                           ]
-                       },
-                       {
-                           "field": "Bullet Speed",
-                           "range": [
-                               250,
-                               380
+    "794-0": {
+           "task": "correlation",
+           "vis": {
+               "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
+               "mark": {
+                   "type": "point",
+                   "tooltip": true
+               },
+               "encoding": {
+                   "x": {
+                       "field": "Shots to Kill (Chest)",
+                       "type": "quantitative",
+                       "aggregate": null,
+                       "axis": {
+                           "format": "s"
+                       }
+                   },
+                   "y": {
+                       "field": "Damage",
+                       "type": "quantitative",
+                       "aggregate": null,
+                       "axis": {
+                           "format": "s"
+                       }
+                   },
+                   "color": {
+                       "field": "Bullet Speed",
+                       "type": "quantitative",
+                       "aggregate": null
+                   }
+               },
+               "transform": [
+                   {
+                       "filter": {
+                           "and": [
+                               {
+                                   "field": "Damage",
+                                   "range": [
+                                       23,
+                                       79
+                                   ]
+                               },
+                               {
+                                   "field": "Bullet Speed",
+                                   "range": [
+                                       250,
+                                       380
+                                   ]
+                               }
                            ]
                        }
-                   ]
+                   }
+               ],
+               "title": {
+                   "text": [
+                       "Damage = low level",
+                       "Bullet Speed = low level"
+                   ],
+                   "align": "center"
+               },
+               "data": {
+                   "url": "../static/data/pubg.csv",
+                   "format": {
+                       "type": "csv"
+                   }
                }
-           }
-       ],
-       "title": {
-           "text": [
-               "Damage = low level",
-               "Bullet Speed = low level"
-           ],
-           "align": "center"
+           },
+           "text": "Damage = low level, Bullet Speed = low level, the correlation coefficient between Shots to Kill (Chest) and Damage is -0.77"
        },
-       "data": {
-           "url": "../static/data/pubg.csv",
-           "format": {
-               "type": "csv"
-           }
-       }
-   }
    ```
 
    
 
-2. gvae: visual encoding embedding.  
+2. ##### Data fact embedding
 
-3. logic_distence: contextual logic embedding.  
+   ###### visual encoding embedding
 
-4. searchPath: transition path search.  
+   Extract visual encoding embedding via data_utils.visvae()
 
-5. server: Front-end system interface.  
+   ###### logical embedding
 
-6. storylineGenerate: multi-perspective storyline generation.  
+   Extract logical embedding via get_logic_dis.py
 
-7. visGenerate: data fact expression.  
+3. ##### Storyline generation
+
+   Extract logical embedding via storyGenerator.py
 
 ## **Install**
 The FactExplorer code has a few dependencies that can be installed using the requirement.txt file.
