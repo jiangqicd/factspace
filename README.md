@@ -146,6 +146,28 @@ FactExplorer, a system designed to help users efficiently and conveniently explo
 
    Extract logical embedding via storyGenerator.py
 
+   The generated storyline structure is "perspective_1": ["source": fact_source, "target": fact_target, ...]
+
+   ```
+   [
+     {"perspective_1": [
+        {"source": fact_1, "target": fact_4}, 
+        {"source": fact_7, "target": fact_3}, 
+        {"source": fact_5, "target": fact_9}, 
+           ...
+        {"source": fact_4, "target": fact_2},]
+     },
+       {"perspective_2":[
+        {"source": fact_4, "target": fact_6}, 
+        {"source": fact_7, "target": fact_2}, 
+        {"source": fact_3, "target": fact_9}, 
+           ...
+        {"source": fact_8, "target": fact_1},]
+     },
+     ...
+   ]
+   ```
+
 ## **Install**
 The FactExplorer code has a few dependencies that can be installed using the requirement.txt file.
 
