@@ -126,18 +126,18 @@ FactExplorer, a system designed to help users efficiently and conveniently explo
 
    ***Contrast** (**D**<sub>c</sub>)* indicates comparison between two facts, are often used to observe the difference of the same fact type under different data items. In this contextual logic, facts have the same fact type and observation dimensions, and the data subspace as the subject of the comparison must be different.
 
-   *logic(m,n)=[ **D**<sub>p</sub> ,**D**<sub>g</sub> , **D**<sub>t</sub> , **D**<sub>c</sub>]*
+   *logic(m,n)=[ **D**<sub>p</sub> , **D**<sub>g</sub> , **D**<sub>t</sub> , **D**<sub>c</sub>]*
 
    ```python
-   logic_distence=[[0,1,0,1],[0,1,1,0],...,[1,1,0,1]]
+   logic_distence=[[0,1,0,1] , [0,1,1,0] , ... , [1,1,0,1]]
    ```
 
    Weight different logical relationships
 
-   *logic(m,n)=[ **w**<sub>p</sub>x**D**<sub>p</sub> ,**w**<sub>g</sub>x**D**<sub>g</sub> , **w**<sub>t</sub>x**D**<sub>t</sub> , **w**<sub>c</sub>x**D**<sub>c</sub>]*
+   *logic(m,n)=[ **w**<sub>p</sub> x **D**<sub>p</sub> , **w**<sub>g</sub> x **D**<sub>g</sub> , **w**<sub>t</sub> x **D**<sub>t</sub> , **w**<sub>c</sub>x**D**<sub>c</sub>]*
 
    ```
-   logic_distence=[[0,0.36,0,0.64],[0,0.32,0.68,0],...,[0.33,0.37,0,0.3]]
+   logic_distence=[[0,0.36,0,0.64] , [0,0.32,0.68,0] , ... , [0.33,0.37,0,0.3]]
    ```
 
    
