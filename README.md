@@ -10,6 +10,7 @@ FactExplorer, a system designed to help users efficiently and conveniently explo
 ## System screenshot
 The interface of FactExplorer, which includes four major views: A is the navigation view, B is the fact space overview view, C is the storyline editor view, and D is the path searching view.
 ![](https://github.com/jiangqicd/factspace/blob/main/overview.png)
+FactExplorer system demonstration video address：https://youtu.be/mfATC2AYuZo
 
 ## **Function description**
 1. ##### Data fact Extraction
