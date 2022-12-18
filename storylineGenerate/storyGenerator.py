@@ -29,9 +29,12 @@ class StoryGenerator:
         self.bins = 4
         self.visted_clusters = []
         self.seq = []
+        self.key_nodes = []
+        self.topic = {}
+        self.top_k_topic = {}
         self.k = 10
         self.custom = []
-        self.topkthreshold = 100
+        self.topkthreshold = 60
         for i in self.cluster_data:
             if i["id"] == custom:
                 self.custom.append(i)
@@ -182,8 +185,8 @@ class StoryGenerator:
     def generateStorylines(self):
 
         # read JS divergence
-        with open(self.JS_path, 'r') as load_f:
-            self.JS_divs = json.load(load_f)
+        # with open(self.JS_path, 'r') as load_f:
+        #     self.JS_divs = json.load(load_f)
 
         key_nodes = []
         # get top-k fact
@@ -224,8 +227,8 @@ class StoryGenerator:
 
             distance = []
             for i in range(len(cur_cluster)):
-                dx = n["cx"] - cur_cluster[i]["cx"]
-                dy = n["cy"] - cur_cluster[i]["cy"]
+                dx = n["x"] - cur_cluster[i]["x"]
+                dy = n["y"] - cur_cluster[i]["y"]
                 distance.append(math.sqrt(dx * dx + dy * dy))
 
             # Label = []
@@ -280,7 +283,7 @@ class StoryGenerator:
     def cross_cluster_detect(self, nodes):
 
         for n in nodes:
-            self.visted_clusters=[n["label"]]
+            self.visted_clusters = [n["label"]]
             self.cross_cluster_storyline_detect(n["id"], n, self.radius, n["label"])
 
     def cross_cluster_storyline_detect(self, node_id, node, radius, start):
@@ -352,9 +355,9 @@ class StoryGenerator:
         return furthest_node
 
     def node_to_node_distance(self, source_node, target_node):
-        cx = target_node["cx"] - source_node["cx"]
-        cy = target_node["cy"] - source_node["cy"]
-        return math.sqrt(cx * cx + cy * cy)
+        x = target_node["x"] - source_node["x"]
+        y = target_node["y"] - source_node["y"]
+        return math.sqrt(x * x + y * y)
 
     def node_to_cluster_distance(self, node, cluster):
         dis = 0
@@ -398,16 +401,16 @@ class StoryGenerator:
         neighbors = []
 
         # s->t
-        s_to_t = [source_node["cx"], source_node["cy"], target_node["cx"], target_node["cy"]]
+        s_to_t = [source_node["x"], source_node["y"], target_node["x"], target_node["y"]]
         # t->s
-        t_to_s = [target_node["cx"], target_node["cy"], source_node["cx"], source_node["cy"]]
+        t_to_s = [target_node["x"], target_node["y"], source_node["x"], source_node["y"]]
 
         for node in self.clusters[source_node["label"]]:
             if node["id"] != source_node["id"]:
                 # s->node
-                s_to_node = [source_node["cx"], source_node["cy"], node["cx"], node["cy"]]
+                s_to_node = [source_node["x"], source_node["y"], node["x"], node["y"]]
                 # t->node
-                t_to_node = [target_node["cx"], target_node["cy"], node["cx"], node["cy"]]
+                t_to_node = [target_node["x"], target_node["y"], node["x"], node["y"]]
 
                 if self.get_angle(s_to_t, s_to_node) <= 90 and self.get_angle(t_to_s, t_to_node) <= 90:
                     neighbors.append(node)
@@ -415,9 +418,9 @@ class StoryGenerator:
         for node in self.clusters[target_node["label"]]:
             if node["id"] != target_node["id"]:
                 # s->node
-                s_to_node = [source_node["cx"], source_node["cy"], node["cx"], node["cy"]]
+                s_to_node = [source_node["x"], source_node["y"], node["x"], node["y"]]
                 # t->node
-                t_to_node = [target_node["cx"], target_node["cy"], node["cx"], node["cy"]]
+                t_to_node = [target_node["x"], target_node["y"], node["x"], node["y"]]
 
                 if self.get_angle(s_to_t, s_to_node) <= 90 and self.get_angle(t_to_s, t_to_node) <= 90:
                     neighbors.append(node)
@@ -441,3 +444,125 @@ class StoryGenerator:
                     self.seq.append({"source": source_node, "target": target_node})
             else:
                 self.seq.append({"source": source_node, "target": next_node})
+
+    # Option II， provide correlated facts for top-k facts
+
+    def getTok_K_Facts(self):
+
+        data = sorted(self.cluster_data, key=lambda x: x["score"], reverse=True)
+
+        self.key_nodes.append(data[0])
+
+        for i in data:
+            flag = True
+            for j in self.key_nodes:
+                if self.node_to_node_distance(i, j) * 1000 < self.topkthreshold:
+                    flag = False
+            if flag:
+                if len(self.key_nodes) < self.k:
+                    self.key_nodes.append(i)
+
+    def getTopicFacts(self):
+
+        for fact in self.cluster_data:
+            if fact in self.key_nodes:
+                self.top_k_topic[fact["id"]] = {
+                    "taskfacts": self.getDifferentTask_SameSlice_SameAttributes_Topic(fact, self.cluster_data),
+                    "attributesfacts": self.getSameTask_SameSlice_DifferentAttributes_Topic(fact, self.cluster_data),
+                    "subspacefacts": self.getSameTask_DifferentSlice_SameAttributesTopic(fact, self.cluster_data)}
+            self.topic[fact["id"]] = {
+                "taskfacts": self.getDifferentTask_SameSlice_SameAttributes_Topic(fact, self.cluster_data),
+                "attributesfacts": self.getSameTask_SameSlice_DifferentAttributes_Topic(fact, self.cluster_data),
+                "subspacefacts": self.getSameTask_DifferentSlice_SameAttributesTopic(fact, self.cluster_data)}
+
+    # Multiple facts of different types describing the same attribute(s), using identical data items
+    def getDifferentTask_SameSlice_SameAttributes_Topic(self, fact, facts):
+
+        taskfacts = []
+
+        for f in facts:
+            if fact["task"] != f["task"]:
+                s_attributes = []
+                for k in fact["vis"]["encoding"]:
+                    s_attributes.append(fact["vis"]["encoding"][k]["field"])
+                t_attributes = []
+                for k in f["vis"]["encoding"]:
+                    t_attributes.append(f["vis"]["encoding"][k]["field"])
+                if sorted(s_attributes) == sorted(t_attributes):
+                    if "and" in fact["vis"]["transform"][0]["filter"].keys() and "and" in f["vis"]["transform"][0][
+                        "filter"].keys():
+                        if sorted(fact["vis"]["transform"][0]["filter"]["and"], key=lambda x: x["field"]) == \
+                                sorted(f["vis"]["transform"][0]["filter"]["and"], key=lambda x: x["field"]):
+                            taskfacts.append({"id": f["id"], "score": f["score"]})
+                    elif "and" not in fact["vis"]["transform"][0]["filter"].keys() and "and" not in \
+                            f["vis"]["transform"][0]["filter"].keys():
+                        if fact["vis"]["transform"][0]["filter"] == f["vis"]["transform"][0]["filter"]:
+                            taskfacts.append({"id": f["id"], "score": f["score"]})
+        return taskfacts
+
+    # Facts of same type from different attributes, using the same data items.
+    def getSameTask_SameSlice_DifferentAttributes_Topic(self, fact, facts):
+
+        attributesfacts = []
+
+        for f in facts:
+            if fact["task"] == f["task"]:
+                s_attributes = []
+                for k in fact["vis"]["encoding"]:
+                    s_attributes.append(fact["vis"]["encoding"][k]["field"])
+                t_attributes = []
+                for k in f["vis"]["encoding"]:
+                    t_attributes.append(f["vis"]["encoding"][k]["field"])
+                if sorted(s_attributes) != sorted(t_attributes):
+                    if "and" in fact["vis"]["transform"][0]["filter"].keys() and "and" in f["vis"]["transform"][0][
+                        "filter"].keys():
+                        if sorted(fact["vis"]["transform"][0]["filter"]["and"], key=lambda x: x["field"]) == \
+                                sorted(f["vis"]["transform"][0]["filter"]["and"], key=lambda x: x["field"]):
+                            attributesfacts.append({"id": f["id"], "score": f["score"]})
+                    elif "and" not in fact["vis"]["transform"][0]["filter"].keys() and "and" not in \
+                            f["vis"]["transform"][0]["filter"].keys():
+                        if fact["vis"]["transform"][0]["filter"] == f["vis"]["transform"][0]["filter"]:
+                            attributesfacts.append({"id": f["id"], "score": f["score"]})
+
+        return attributesfacts
+
+    # Comparison between two facts with the same attribute(s) and fact type.
+    def getSameTask_DifferentSlice_SameAttributesTopic(self, fact, facts):
+
+        subspacefacts = []
+
+        for f in facts:
+            if fact["task"] == f["task"]:
+                s_attributes = []
+                for k in fact["vis"]["encoding"]:
+                    s_attributes.append(fact["vis"]["encoding"][k]["field"])
+                t_attributes = []
+                for k in f["vis"]["encoding"]:
+                    t_attributes.append(f["vis"]["encoding"][k]["field"])
+                if sorted(s_attributes) == sorted(t_attributes):
+
+                    if "and" in fact["vis"]["transform"][0]["filter"].keys() and "and" in f["vis"]["transform"][0][
+                        "filter"].keys():
+                        if sorted(fact["vis"]["transform"][0]["filter"]["and"], key=lambda x: x["field"]) != \
+                                sorted(f["vis"]["transform"][0]["filter"]["and"], key=lambda x: x["field"]):
+                            if fact["vis"]["transform"][0]["filter"]["and"][0] != \
+                                    f["vis"]["transform"][0]["filter"]["and"][0] and \
+                                    fact["vis"]["transform"][0]["filter"]["and"][0]["field"] == \
+                                    f["vis"]["transform"][0]["filter"]["and"][0]["field"] and \
+                                    fact["vis"]["transform"][0]["filter"]["and"][1] == \
+                                    f["vis"]["transform"][0]["filter"]["and"][1]:
+                                subspacefacts.append({"id": f["id"], "score": f["score"]})
+                            elif fact["vis"]["transform"][0]["filter"]["and"][1] != \
+                                    f["vis"]["transform"][0]["filter"]["and"][1] and \
+                                    fact["vis"]["transform"][0]["filter"]["and"][1]["field"] == \
+                                    f["vis"]["transform"][0]["filter"]["and"][1]["field"] and \
+                                    fact["vis"]["transform"][0]["filter"]["and"][0] == \
+                                    f["vis"]["transform"][0]["filter"]["and"][0]:
+                                subspacefacts.append({"id": f["id"], "score": f["score"]})
+                    elif "and" not in fact["vis"]["transform"][0]["filter"].keys() and "and" not in \
+                            f["vis"]["transform"][0]["filter"].keys():
+                        if fact["vis"]["transform"][0]["filter"] != f["vis"]["transform"][0]["filter"] and \
+                                fact["vis"]["transform"][0]["filter"]["field"] == f["vis"]["transform"][0]["filter"][
+                            "field"]:
+                            subspacefacts.append({"id": f["id"], "score": f["score"]})
+        return subspacefacts

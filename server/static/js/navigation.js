@@ -124,120 +124,130 @@ function show_vis_dis(data) {
         })
 }
 
-$(function () {
 
-    $('#wl').bind('input propertychange', function () {
-        $('#wl_value').html(" ");
-        $('#wl_value').html($(this).val());
-        let wl = $("#wl").val();
-        let we = $("#we").val();
-        for (var i = 0; i < dataset.length; i++) {
-            dataset[i]["x"] = parseFloat(dataset[i]["ex"]) * we + parseFloat(dataset[i]["lx"]) * wl
-            dataset[i]["y"] = parseFloat(dataset[i]["ey"]) * we + parseFloat(dataset[i]["ly"]) * wl
-        }
-        var o = document.getElementById("scatter");
-        var width = o.clientWidth || o.offsetWidth;
-        var height = o.clientHeight || o.offsetHeight;
-        let padding = 60
-        let svg = d3.select("#scatter").select("svg")
-
-        svg.selectAll("circle").style("stroke-width", 0)
-
-        svg.attr("width", width)
-            .attr("height", height)
-        //x轴标尺
-        let xScale = d3.scaleLinear()
-            .domain([0, d3.max(dataset, (d) => d["x"])])
-            .range([padding, width - padding * 2])
-
-        //y轴标尺
-        let yScale = d3.scaleLinear()
-            .domain([0, d3.max(dataset, (d) => d["y"])])
-            .range([height - padding, padding])
-
-        for (var i = 0; i < dataset.length; i++) {
-            dataset[i]["cx"] = xScale(dataset[i]["x"])
-            dataset[i]["cy"] = yScale(dataset[i]["y"])
-        }
-
-        svg.selectAll("circle")
-            .data(dataset)
-            .attr("cx", (d) => {
-                return xScale(d["x"])
-            })
-            .attr("cy", (d) => {
-                return yScale(d["y"])
-            })
-        svg.selectAll("image").remove()
-        svg.selectAll("path").remove()
-
-        $(".closeimg").remove()
-    });
-
+$('#wl').bind('input propertychange', function () {
+    $('#wl_value').html(" ");
+    $('#wl_value').html($(this).val());
 })
-$(function () {
 
-    $('#we').bind('input propertychange', function () {
+$('#we').bind('input propertychange', function () {
+    $('#we_value').html(" ");
+    $('#we_value').html($(this).val());
+});
 
-        $('#we_value').html(" ");
-        $('#we_value').html($(this).val());
-        let wl = $("#wl").val();
-        let we = $("#we").val();
-        for (var i = 0; i < dataset.length; i++) {
-            dataset[i]["x"] = parseFloat(dataset[i]["ex"]) * we + parseFloat(dataset[i]["lx"]) * wl
-            dataset[i]["y"] = parseFloat(dataset[i]["ey"]) * we + parseFloat(dataset[i]["ly"]) * wl
-        }
-        var o = document.getElementById("scatter");
-        var width = o.clientWidth || o.offsetWidth;
-        var height = o.clientHeight || o.offsetHeight;
-        let padding = 60
-        let svg = d3.select("#scatter").select("svg")
+$("#weight").on("click", function () {
+    var data = $("#datasetSelect").val()
+    let wl = $("#wl").val();
+    let we = $("#we").val();
+    $.post("/adjustscatter", {
+        // query table
+        "dataset": data,
+        "data": JSON.stringify(dataset),
+        "wl": wl,
+        "we": we
+    })
+        .done(function (response) {
+            dataset = JSON.parse(response);
+            for (var i = 0; i < dataset.length; i++) {
+                dataset[i]["x"] = parseFloat(dataset[i]["x"])
+                dataset[i]["y"] = parseFloat(dataset[i]["y"])
+                dataset[i]["score"] = parseFloat(dataset[i]["score"])
+            }
+            let svg = d3.select("#scatter").select("svg")
+            var o = document.getElementById("scatter");
+            var width = o.clientWidth || o.offsetWidth;
+            var height = o.clientHeight || o.offsetHeight;
+            let padding = 60
+            //x轴标尺
+            let xScale = d3.scaleLinear()
+                .domain([0, d3.max(dataset, (d) => d["x"])])
+                .range([padding, width - padding * 2])
 
-        svg.selectAll("circle").style("stroke-width", 0)
+            //y轴标尺
+            let yScale = d3.scaleLinear()
+                .domain([0, d3.max(dataset, (d) => d["y"])])
+                .range([height - padding, padding])
 
-        svg.attr("width", width)
-            .attr("height", height)
-        //x轴标尺
-        let xScale = d3.scaleLinear()
-            .domain([0, d3.max(dataset, (d) => d["x"])])
-            .range([padding, width - padding * 2])
-
-        //y轴标尺
-        let yScale = d3.scaleLinear()
-            .domain([0, d3.max(dataset, (d) => d["y"])])
-            .range([height - padding, padding])
-        for (var i = 0; i < dataset.length; i++) {
-            dataset[i]["cx"] = xScale(dataset[i]["x"])
-            dataset[i]["cy"] = yScale(dataset[i]["y"])
-        }
-
-
-        svg.selectAll("circle")
-            .data(dataset)
-            .attr("cx", (d) => {
-                return xScale(d["x"])
-            })
-            .attr("cy", (d) => {
-                return yScale(d["y"])
-            })
-        svg.selectAll("image").remove()
-        svg.selectAll("path").remove()
-        $(".closeimg").remove()
-    });
-
+            svg.selectAll("circle").style("stroke-width", 0)
+            svg.selectAll("circle")
+                .data(dataset)
+                .attr("cx", (d) => {
+                    return xScale(d["x"])
+                })
+                .attr("cy", (d) => {
+                    return yScale(d["y"])
+                })
+            svg.selectAll("image").remove()
+            svg.selectAll("path").remove()
+            $(".closeimg").remove()
+        })
 })
+
 $("#confirm").on("click", function () {
     var div = document.getElementById("chartview")
     var child = div.firstChild
     var id = child.id.replace("editor", "")
-    var data = {}
-    for (var i = 0; i < dataset.length; i++) {
-        if (dataset[i]["id"] == id) {
-            data = dataset[i]
+    var data = editedvis
+    // for (var i = 0; i < dataset.length; i++) {
+    //     if (dataset[i]["id"] == id) {
+    //         data = dataset[i]
+    //     }
+    // }
+    var mark = $("#ch-mark").val()
+    var x = $("#ch-x").val()
+    var y = $("#ch-y").val()
+    var color = $("#ch-color").val()
+    var theta = $("#ch-theta").val()
+    var x_aggr = $("#ch-xtrans").val()
+    var y_aggr = $("#ch-ytrans").val()
+    var color_aggr = $("#ch-colortrans").val()
+    var theta_aggr = $("#ch-thetatrans").val()
+    var channel = ["x", "y", "color", "theta"]
+    var attr = [x, y, color, theta]
+    var aggr = [x_aggr, y_aggr, color_aggr, theta_aggr]
+    console.log(map_attr_type)
+
+    if (mark) {
+        data["vis"]["mark"]["type"] = mark
+    }
+    for (var i = 0; i < channel.length; i++) {
+        var c = channel[i]
+        var at = attr[i]
+        var a = aggr[i]
+        if (at && at != "-") {
+            if (data["vis"]["encoding"].hasOwnProperty(c)) {
+                data["vis"]["encoding"][c]["field"] = at
+                if (map_attr_type[at] == "Q") {
+                    data["vis"]["encoding"][c]["type"] = "quantitative"
+                } else if (map_attr_type[at] == "N") {
+                    data["vis"]["encoding"][c]["type"] = "nominal"
+                } else {
+                    data["vis"]["encoding"][c]["type"] = "temporal"
+                }
+                if (a) {
+                    data["vis"]["encoding"][c]["aggregate"] = a
+                }
+            } else {
+                data["vis"]["encoding"][c] = {}
+                data["vis"]["encoding"][c]["field"] = at
+                if (map_attr_type[at] == "Q") {
+                    data["vis"]["encoding"][c]["type"] = "quantitative"
+                } else if (map_attr_type[at] == "N") {
+                    data["vis"]["encoding"][c]["type"] = "nominal"
+                } else {
+                    data["vis"]["encoding"][c]["type"] = "temporal"
+                }
+                if (a) {
+                    data["vis"]["encoding"][c]["aggregate"] = a
+                }
+            }
+        } else {
+            if (data["vis"]["encoding"].hasOwnProperty(c)) {
+                delete data["vis"]["encoding"][c]
+            }
         }
     }
-    var mark = $("#ch-mark").val()
-    data["vis"]["mark"]["type"] = mark
+
     var spec = data["vis"]
     spec['width'] = 200
     spec['height'] = 200
@@ -357,6 +367,13 @@ function adjust() {
     }
 }
 
+function add_fliter(fliter_task, fliter_attributes, fliter_subspace, score) {
+    add_fliter_task(fliter_task)
+    add_fliter_attribute(fliter_attributes)
+    add_fliter_subspace(fliter_subspace)
+    add_fliter_score(score)
+}
+
 function add_fliter_task(data) {
     for (var i = 0; i < data.length; i++) {
         var html = '<option value="' + data[i] + '">' + data[i] + '</option>'
@@ -371,12 +388,29 @@ function add_fliter_attribute(data) {
         $('#attributes2Select').append(html)
     }
 }
+
 function add_fliter_subspace(data) {
-    for (var i = 0; i < data.length; i++) {
-        var html = '<option value="' + data[i] + '">' + data[i] + '</option>'
-        $('#subspaceSelect').append(html)
+    var ht = '<option value="' + "" + '">' + "" + '</option>'
+    $('#subspaceattrSelect').append(ht)
+    for (var key in data) {
+        var option = document.createElement("option")
+        option.value = key
+        option.text = key
+        $('#subspaceattrSelect').append(option)
     }
 }
+
+$("#subspaceattrSelect").on("change", function () {
+    $('#subspacevalueSelect').empty()
+    var ht = '<option value="' + "" + '">' + "" + '</option>'
+    $('#subspacevalueSelect').append(ht)
+    var key = $("#subspaceattrSelect").val()
+    for (var i = 0; i < subspace[key].length; i++) {
+        var h = '<option value="' + subspace[key][i] + '">' + subspace[key][i] + '</option>'
+        $('#subspacevalueSelect').append(h)
+    }
+})
+
 function add_fliter_score(data) {
     for (var i = 0; i < data.length; i++) {
         var html = '<option value="' + data[i] + '">' + data[i] + '</option>'

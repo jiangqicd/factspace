@@ -16,7 +16,7 @@ import numpy as np
 from gvae.model_vae import ModelVAE
 from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, TensorBoard
 
-MAX_LEN = 31
+MAX_LEN = 32
 LATENT = 20
 EPOCHS = 400
 BATCH = 200

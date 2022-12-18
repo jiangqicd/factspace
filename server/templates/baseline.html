@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fact space</title>
+
+    <!--Vendor CSS files-->
+    <link src="../static/img/symbol">
+    <link src="../static/img/loading.gif">
+    <link src="../static/img">
+    <link src="../static/data">
+    <link src="../static/css/sk.d3.min.css">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap-theme.css"
+          rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+    <link href="https://cdn.datatables.net/rowgroup/1.1.1/css/rowGroup.dataTables.min.css">
+    <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/json-tree-viewer@0.0.1/libs/jsonTree/jsonTree.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="//apps.bdimg.com/libs/jqueryui/1.10.4/css/jquery-ui.min.css">
+
+    <!--Custom CSS files-->
+    <link href="{{ url_for('static', filename='css/baseline.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/sk.d3.min.css') }}" rel="stylesheet">
+    <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+    <!--    <script src="../static/js/d3.min.js"></script>-->
+</head>
+<body>
+<div class="container-fluid">
+    <!--<center><h3>Fact space</h3></center>-->
+    <!--<br/>-->
+    <div class="row">
+        <div class="col-md-12" style="background:dodgerblue;height: 40px;">
+            <div class="col-md-1" style="position: center;top: 4px;">
+            <span class="input-group-btn">
+                <select class="form-control" id="datasetSelect" style="height: 30px;">
+                    <option value="olympic_medals.csv">Olympic Medals</option>
+                    <option value="entrepreneurship.csv">Entrepreneurship</option>
+                    <option value="movies-w-year.csv">Movies</option>
+                    <option value="cars-w-year.csv">Cars</option>
+                    <option value="housing.csv">Housing</option>
+                    <option value="colleges.csv">Colleges</option>
+                    <option value="euro.csv">Euro</option>
+                    <option value="economic.csv">Economic</option>
+                    <option value="bill.csv">Bill</option>
+                    <option value="pubg.csv" selected="selected">Pubg</option>
+                     <option value="happiness.csv">Happiness</option>
+                     <option value="vaccine_correlation.csv">Vaccine</option>
+                </select>
+            </span>
+            </div>
+            <div class="col-md-11" style="padding-top: 2px;">
+                <div style="float: left;padding-left: 40px;padding-top: 5px">
+                    <label style="color: #cad3d0;float: left;font-size: 18px">Attribute_1:</label>
+                    <span>
+                         <select id="attributes1Select" style="height: 30px;width:120px;float: left"></select>
+                     </span>
+                </div>
+                <div style="float: left;padding-left: 25px;padding-top: 5px">
+                    <label style="color: #cad3d0;float: left;font-size: 18px">Attribute_2:</label>
+                    <span>
+                         <select id="attributes2Select" style="height: 30px;width:120px;float: left"></select>
+                     </span>
+                </div>
+                <div style="float: left;padding-left: 25px;padding-top: 5px">
+                    <label style="color: #cad3d0;float: left;font-size: 18px">S_Attr:</label>
+                    <span>
+                         <select id="subspaceattrSelect" style="height: 30px;width:120px;float: left"></select>
+                     </span>
+                </div>
+                <div style="float: left;padding-left: 25px;padding-top: 5px">
+                    <label style="color: #cad3d0;float: left;font-size: 18px">S_Value:</label>
+                    <span>
+                         <select id="subspacevalueSelect" style="height: 30px;width:120px;float: left"></select>
+                     </span>
+                </div>
+                <div style="float: left;padding-left: 25px;padding-top: 5px">
+                    <label style="color: #cad3d0;float: left;font-size: 18px">Task:</label>
+                    <span>
+                         <select id="tasksSelect" style="height: 30px;width:120px;float: left"></select>
+                     </span>
+                </div>
+                <div style="float: left;padding-left: 25px;padding-top: 5px">
+                    <label style="color: #cad3d0;float: left;font-size: 18px">Score:</label>
+                    <span>
+                         <select id="scoreSelect" style="height: 30px;width:120px;float: left"></select>
+                     </span>
+                </div>
+                <div style="float: left;padding-left: 25px;padding-top: 5px">
+                    <label style="color: #cad3d0;float: left;font-size: 18px">ID:</label>
+                    <input id="idsearch" type="text" name="custom perspective" value="44-0"
+                           style="width: 60px">
+                </div>
+                <div style="float: left;padding-top: 5px;padding-left: 65px;">
+                    <button type="button" id="fliter" style="height: 30px;color: #384ade;float: left">
+                        Filter
+                    </button>
+                </div>
+                <div style="float: left;padding-top: 5px;padding-left: 30px;">
+                    <button type="button" id="remove" style="height: 30px;color: #384ade;float: left">
+                        Remove
+                    </button>
+                </div>
+                <div style="padding-left: 53px;float: left">
+                    <button class="btn btn-success " type="button" id="weight">
+                        Reset
+                    </button>
+                </div>
+                <div style="padding-left: 30px;float: left">
+                    <button class="btn btn-success " type="button" id="queryBtn">
+                        Submit
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3" style="height:650px; float: left;padding-left: 2px;padding-top: 2px">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <center><h3 class="panel-title">
+                        Correlation Matrix
+                    </h3></center>
+                </div>
+                <div id="correlation"></div>
+            </div>
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <center><h3 class="panel-title">
+                        Data
+                    </h3></center>
+                </div>
+                <div id="table"></div>
+            </div>
+        </div>
+        <div class="col-md-9" id="showfacts" style="height: 1000px;padding-left: 2px;padding-top: 2px">
+        </div>
+    </div>
+    <div class="loadingModal">
+    </div>
+</div>
+</body>
+
+<!--JS files-->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://apps.bdimg.com/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="http://cdn.bootcss.com/bootstrap/2.3.1/js/bootstrap-typeahead.min.js"></script>
+<script src="https://cdn.datatables.net/rowgroup/1.1.1/js/dataTables.rowGroup.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/json-tree-viewer@0.0.1/libs/jsonTree/jsonTree.js"></script>
+<script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-lite@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+<script src="https://unpkg.com/d3-arrow@0.0.25/dist/d3-arrow.min.js"></script>
+<script src="../static/js/relationMatrix.js"></script>
+<script src="../static/js/baseline.js"></script>
+</html>

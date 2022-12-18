@@ -8,7 +8,9 @@
 from sklearn.cluster import DBSCAN
 import numpy as np
 import pandas as pd
-
+from sklearn.manifold import TSNE
+from scipy.stats import ortho_group
+from procrustes import orthogonal
 from logic_distence.get_logic_dis import logic_dis_extractor
 from gvae.data_utils import visvae
 from factExtract.extractor import Extractor
@@ -30,8 +32,13 @@ def distance_compution(Path):
         print("开始计算" + path + "距离矩阵")
         print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
         distance_path = "../server/static/data/distance_" + path + ".json"
-
+        logical_distance_path = "../server/static/data/logical_distance_" + path + ".json"
+        visual_distance_path = "../server/static/data/visual_distance_" + path + ".json"
+        vec_path = "../server/static/data/vec_" + path + ".json"
         vis_display_vegalite_data_path = "../server/static/vis/" + path + ".json"
+
+        tsne = TSNE(n_components=2)
+        pca20 = PCA(n_components=20)
 
         with open(vis_display_vegalite_data_path, 'r') as load_f:
             load_dict = json.load(load_f)
@@ -39,15 +46,17 @@ def distance_compution(Path):
         # 计算逻辑距离
         lde = logic_dis_extractor(load_dict)
 
-        logic_distence_matrix = lde.logic_detect()
+        logic_distence_matrix_org = lde.logic_detect()
 
         standard = preprocessing.MinMaxScaler()
 
-        logic_distence_matrix = standard.fit_transform(logic_distence_matrix)
+        logic_distence_matrix_org = list(standard.fit_transform(logic_distence_matrix_org))
 
-        pca = PCA(n_components=2)
+        logic_distence_matrix = pca20.fit_transform(logic_distence_matrix_org)
 
-        ld = pca.fit_transform(logic_distence_matrix)
+        logic_distence_matrix = list(standard.fit_transform(logic_distence_matrix))
+
+        ld = tsne.fit_transform(logic_distence_matrix_org)
 
         ld = list(standard.fit_transform(ld))
 
@@ -68,18 +77,39 @@ def distance_compution(Path):
 
         outputspec, z, id = visvae(encoding_data, rule_path, model_path)
 
-        ed = pca.fit_transform(z)
+        z = list(standard.fit_transform(z))
+
+        ed = tsne.fit_transform(z)
 
         ed = list(standard.fit_transform(ed))
 
+        comb_dis = np.concatenate((np.array(z) * 0.5, np.array(logic_distence_matrix) * 0.5), axis=1)
+
+        d = tsne.fit_transform(comb_dis)
+        d = list(standard.fit_transform(d))
+
+        logical_dis = {}
+        visual_dis = {}
         distance = {}
-
+        vec = {}
         for i, k in enumerate(load_dict):
-            distance[k] = {"ld": [str(ld[i][0]), str(ld[i][1])], "ed": [str(ed[i][0]), str(ed[i][1])]}
+            distance[k] = {"x": str(d[i][0]), "y": str(d[i][1])}
+            logical_dis[k] = {"lx": str(ld[i][0]), "ly": str(ld[i][1])}
+            visual_dis[k] = {"ex": str(ed[i][0]), "ey": str(ed[i][1])}
+            vec[k] = {"ld_vec": str(list(logic_distence_matrix[i])), "ed_vec": str(list(z[i]))}
 
+        logical_dis = json.dumps(logical_dis, indent=4)
+        visual_dis = json.dumps(visual_dis, indent=4)
+        vec = json.dumps(vec, indent=4)
         distance = json.dumps(distance, indent=4)
+        with open(vec_path, 'w') as file:
+            file.write(vec)
         with open(distance_path, 'w') as file:
             file.write(distance)
+        with open(logical_distance_path, 'w') as file:
+            file.write(logical_dis)
+        with open(visual_distance_path, 'w') as file:
+            file.write(visual_dis)
 
 
 # data generation
@@ -147,8 +177,8 @@ def score(Path):
         impact_values = []
         significance_values = []
         significance_values_formal = []
-        impact_w = 0.8
-        significance_w = 0.2
+        impact_w = 0.4
+        significance_w = 0.6
         table = pd.read_csv(table_path)
         with open(vis_display_vegalite_data_path, 'r') as load_f:
             load_dict = json.load(load_f)
@@ -159,17 +189,17 @@ def score(Path):
                 significance_values.append(cal_each_fact(fact, table)[1])
             else:
                 significance_values.append(cal_each_fact(fact, table)[0])
-        print(significance_values)
-        Sum = sum(significance_values)
-        print("--------------------------------", Sum)
-        for i in range(len(significance_values)):
-            fom = significance_values[i] / Sum
-            print(fom)
-            significance_values_formal.append(fom)
+        # print(significance_values)
+        # Sum = sum(significance_values)
+        # print("--------------------------------", Sum)
+        # for i in range(len(significance_values)):
+        #     fom = significance_values[i] / Sum
+        #     print(fom)
+        #     significance_values_formal.append(fom)
         for i in range(len(impact_values)):
             # print(impact_values[i])
             # print(significance_values_formal[i])
-            fact_score.append(impact_w * impact_values[i] + significance_w * significance_values_formal[i])
+            fact_score.append(impact_w * impact_values[i] + significance_w * significance_values[i])
 
         Score = {}
         for i, k in enumerate(load_dict):
@@ -181,8 +211,44 @@ def score(Path):
             file.write(data)
 
 
+def getTopic(Path):
+    for path in Path:
+        table_path = "../data/" + path + ".csv"
+        vis_display_vegalite_data_path = "../server/static/vis/" + path + ".json"
+        score_save_path = "../server/static/data/" + path + "_score.json"
+        dis_path = "../server/static/data/distance_" + path + ".json"
+        with open(dis_path, 'r') as load_f:
+            distance = json.load(load_f)
+        with open(score_save_path, 'r') as load_f:
+            fact_score = json.load(load_f)
+        with open(vis_display_vegalite_data_path, 'r') as load_f:
+            load_dict = json.load(load_f)
+        dataset = []
+        for i, k in enumerate(load_dict):
+            dataset.append(
+                {"id": k, "x": float(distance[k]["x"]), "task": load_dict[k]["task"], "y": float(distance[k]["y"]),
+                 "score": float(fact_score[k]), "vis": load_dict[k]["vis"]})
+        storyline = StoryGenerator("../data/" + path + ".csv", dataset, "../data/" + path + "_js_divergence.json",
+                                   cluster_data=dataset, level=1, custom="1-1")
+
+        # storyline.generateStorylines()
+        storyline.getTok_K_Facts()
+        storyline.getTopicFacts()
+
+        all_topic_save_path = "../server/static/data/" + path + "_topic.json"
+        data = json.dumps(storyline.topic, indent=4)
+        with open(all_topic_save_path, 'w') as file:
+            file.write(data)
+
+        top_k_topic_save_path = "../server/static/data/" + path + "_top_k_topic.json"
+        data = json.dumps(storyline.top_k_topic, indent=4)
+        with open(top_k_topic_save_path, 'w') as file:
+            file.write(data)
+
+
 if __name__ == '__main__':
-    tables_path = ["pubg"]
+    tables_path = ["entrepreneurship"]
     data_generation(tables_path)
     distance_compution(tables_path)
     score(tables_path)
+    getTopic(tables_path)

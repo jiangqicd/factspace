@@ -1,23 +1,20 @@
 // Stores list of visualization recommendations
 var path = "../static/vis/happiness.json"
+var editedvis = {}
 var task_distribution = {}
 var vis_distribution = {}
-var task = ["correlation", "trend", "extremum", "derived_value", "proportion", "distribution"]
+var task = ["distribution", "proportion", "correlation", "trend", "derived_value", "aggregation"]
+var mark = ["bar", "arc", "tick", "boxplot", "point"]
 var storyline_data = {}
 var color11 = {"distribution": '#8dd3c7', "derived_value": '#ffffb3', "correlation": '#bebada', "trend": '#fb8072',}
 var clr12 = ['#E0EBE9', '#8dd3c7', '#ffffb3', '#bebada', '#fb8072', '#80b1d3', '#fdb462', '#b3de69', '#fccde5', '#4BEBEB', '#06bd00', '#ccebc5', '#06BD00']
 // var clr11 = ["#ADADAD", "#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6", "#6a3d9a", "#ffff99", "#b15928", "#fbb4ae", "#b3cde3", "#ccebc5", "#decbe4", "#fed9a6", "#ffffcc", "#e5d8bd", "#fddaec"]
-var clr11 = ["#ADADAD", '#8dd3c7', '#ffffb3', '#bebada', '#fb8072', '#80b1d3', '#fdb462', '#b3de69', '#fccde5', '#d9d9d9', '#bc80bd', '#ccebc5']
-
-//All fact data, including tasks, visualizations, coordinates
-var dataset = {}
+// var clr11 = ["#ADADAD", '#80b1d3', '#fdb462', '#8dd3c7', '#bebada', '#fb8072', '#b6de96', '#fccde5', '#ffffb3', '#d9d9d9', '#bc80bd', '#a4c7eb']
+var clr11 = ["#4e79a7", "#f28e2c", "#76b7b2", "#59a14f", "#edc949", "#af7aa1", "#ff9da7", "#9c755f", "#bab0ab"]
 //All attributes of the table
-var Attributes = ["correlation", "trend", "extremum", "derived_value", "proportion", "distribution"]
+var Attributes = []
 
 var path = "../static/vis/happiness.json"
-
-var fliter_task = []
-var fliter_attributes = []
 
 
 function storyline(data, level, custom) {
@@ -166,6 +163,7 @@ function show_storyline(data) {
                 document.getElementById('chartview').innerHTML = ""
                 document.getElementById('chartview').appendChild(vis);
                 var spec = d["vis"]
+                editedvis = d
                 spec['width'] = 180
                 spec['height'] = 150
                 vegaEmbed(document.getElementById("editor" + d["id"]), spec, vegaOptMode)
@@ -310,174 +308,6 @@ function show_storyline(data) {
     })
 }
 
-$(globalConfig.queryBtn).on("click", function () {
-    initialize()
-    var data = $("#datasetSelect").val()
-    $.post("/scatter", {
-        "dataset": data,
-    })
-        .done(function (response) {
-
-                console.log(response)
-                dataset = JSON.parse(response)["data"];
-                fliter_task = JSON.parse(response)["tasks"]
-                fliter_attributes = JSON.parse(response)["columns"]
-                var score = ["", "0-0.2", "0.2-0.4", "0.4-0.6", "0.6-0.8", "0.8-1"]
-                add_fliter_task(fliter_task)
-                add_fliter_attribute(fliter_attributes)
-                add_fliter_subspace(fliter_attributes)
-                add_fliter_score(score)
-                for (var i = 0; i < dataset.length; i++) {
-                    if (task_distribution.hasOwnProperty(dataset[i]["task"])) {
-                        task_distribution[dataset[i]["task"]] += 1
-                    } else {
-                        task_distribution[dataset[i]["task"]] = 1
-                    }
-                    if (vis_distribution.hasOwnProperty(dataset[i]["mark"])) {
-                        vis_distribution[dataset[i]["mark"]] += 1
-                    } else {
-                        vis_distribution[dataset[i]["mark"]] = 1
-                    }
-                }
-                show_task_dis(task_distribution)
-                show_vis_dis(vis_distribution)
-                let wl = $("#wl").val();
-                let we = $("#we").val();
-                for (var i = 0; i < dataset.length; i++) {
-                    dataset[i]["x"] = parseFloat(dataset[i]["ex"]) * we + parseFloat(dataset[i]["lx"]) * wl
-                    dataset[i]["y"] = parseFloat(dataset[i]["ey"]) * we + parseFloat(dataset[i]["ly"]) * wl
-                }
-                var o = document.getElementById("scatter");
-                var width = o.clientWidth || o.offsetWidth;
-                var height = o.clientHeight || o.offsetHeight;
-                let padding = 60
-                let svg = d3.select("#scatter")
-                    .append("svg")
-                    .attr("id", "scatterplot")
-                    .attr("width", width)
-                    .attr("height", height)
-                //x轴标尺
-                let xScale = d3.scaleLinear()
-                    .domain([0, d3.max(dataset, (d) => d["x"])])
-                    .range([padding, width - padding * 2])
-
-                //y轴标尺
-                let yScale = d3.scaleLinear()
-                    .domain([0, d3.max(dataset, (d) => d["y"])])
-                    .range([height - padding, padding])
-
-                //size标尺
-                let sizeScale = d3.scaleLinear()
-                    .domain([0, d3.max(dataset, (d) => d["score"])])
-                    .range([1, 5])
-
-                for (var i = 0; i < dataset.length; i++) {
-                    dataset[i]["cx"] = xScale(dataset[i]["x"])
-                    dataset[i]["cy"] = yScale(dataset[i]["y"])
-                }
-
-                // 建立拖拽缩放
-                let zoom = d3.zoom()
-                    .scaleExtent([0, 16])
-                    .extent([[0, 0], [width, height]])
-                    .on('zoom', zoomed);
-
-                function zoomed() {
-                    d3.select('#scatter')
-                        .select('svg')
-                        .selectAll('circle')
-                        .attr('transform', d3.event.transform)
-                    d3.select('#scatter')
-                        .select('svg')
-                        .selectAll('path')
-                        .attr('transform', d3.event.transform)
-                    d3.select('#scatter')
-                        .select('svg')
-                        .selectAll('image')
-                        .attr('transform', d3.event.transform)
-                    d3.select('#scatter')
-                        .select('svg')
-                        .selectAll('line')
-                        .attr('transform', d3.event.transform)
-                }
-
-                svg.call(zoom);
-
-                function createTooltip() {
-                    return d3.select('body')
-                        .append('div')
-                        .classed('tooltip', true)
-                        .style('opacity', 0)
-                        .style('display', 'none');
-                };
-                let tooltip = createTooltip();
-
-                //tooltip显示
-                function tipVisible(textContent) {
-                    tooltip.transition()
-                        .duration(400)
-                        .style('opacity', 0.9)
-                        .style('display', 'block');
-                    tooltip.html(textContent)
-                        .style('left', (d3.event.pageX + 15) + 'px')
-                        .style('top', (d3.event.pageY + 15) + 'px');
-                }
-
-                //tooltip隐藏
-                function tipHidden() {
-                    tooltip.transition()
-                        .duration(400)
-                        .style('opacity', 0)
-                        .style('display', 'none');
-                }
-
-                svg.selectAll("circle")
-                    .data(dataset)
-                    .enter()
-                    .append("circle")
-                    .attr("cx", (d) => {
-                        return xScale(d["x"])
-                    })
-                    .attr("cy", (d) => {
-                        return yScale(d["y"])
-                    })
-                    .attr("r", (d) => {
-                        return sizeScale(d["score"])
-                    })
-                    .attr("id", (d) => {
-                        return "circle" + d.id
-                    })
-                    .attr("fill", (d) => {
-                        return clr11[parseInt(task.indexOf(d["task"])) + 1]
-                    })
-                    .on('mouseover', function (d) {
-                        let attr = ""
-                        for (var key in d.vis.encoding) {
-                            attr += "</br>" + key + " : " + d.vis.encoding[key]["field"]
-                        }
-                        let text = "id: " + d.id + "</br>" + "task: " + d.task + "</br>" + "vis: " + d.vis.mark.type + attr + "</br>" + d.text
-                        tipVisible(text);
-                    })
-                    .on('mouseout', function (d) {
-                        tipHidden();
-                    })
-                    .on('click', function (d) {
-                        d3.select(this).style("stroke", "blue")
-                        d3.select(this).style("stroke-width", 3)
-                        var data = []
-                        for (var i = 0; i < dataset.length; i++) {
-                            if (dataset[i]["id"] == d.id) {
-                                data.push(dataset[i])
-                            }
-                        }
-                        show_storyline(data)
-                    })
-            }
-        )
-
-})
-
-
 function show_vis(d, id, scenes) {
 
     var container = document.createElement("div");
@@ -512,6 +342,7 @@ function show_vis(d, id, scenes) {
         document.getElementById('chartview').innerHTML = ""
         document.getElementById('chartview').appendChild(vis);
         var spec = d["vis"]
+        editedvis = d
         spec['width'] = 200
         spec['height'] = 200
         vegaEmbed(document.getElementById("editor" + d["id"]), spec, vegaOptMode)
@@ -657,8 +488,17 @@ function initialize() {
     $("#storyline").empty()
     $("#search_result_show").empty()
     $("#chartview").empty()
-     $("#task_dis").empty()
-     $("#vis_dis").empty()
+    $("#task_dis").empty()
+    $("#vis_dis").empty()
+    var selected_table = $("#datasetSelect").val().replace(".csv", "")
+    var all_path = "../static/data/" + selected_table + "_topic.json"
+    var top_k_path = "../static/data/" + selected_table + "_top_k_topic.json"
+    $.getJSON(all_path, function (data) {
+        all_topic_data = data
+    })
+    $.getJSON(top_k_path, function (data) {
+        top_k_topic_data = data
+    })
 }
 
 $("#cancel_facts").on("click", function () {

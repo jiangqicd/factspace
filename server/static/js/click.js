@@ -1,9 +1,9 @@
-
 /*Interactions in the fact space*/
 
 $("#remove").on("click", function () {
     let svg = d3.select("#scatter").select("svg")
     svg.selectAll('circle').style("stroke-width", 0)
+    svg.selectAll('path').remove()
 })
 
 $("#fliter").on("click", function () {
@@ -14,7 +14,8 @@ $("#fliter").on("click", function () {
     var task = $("#tasksSelect").val();
     var attribute1 = $("#attributes1Select").val();
     var attribute2 = $("#attributes2Select").val();
-    var subspace = $("#subspaceSelect").val();
+    var subspaceattr = $("#subspaceattrSelect").val();
+    var subspacevalue = $("#subspacevalueSelect").val();
     var id_data = []
     var score_data = []
     var task_data = []
@@ -71,21 +72,17 @@ $("#fliter").on("click", function () {
         else {
             attribute_data.push(dataset[i])
         }
-        if (subspace != "") {
-            var filter = dataset[i]["vis"]["transform"][0]["filter"]
-            if (filter.hasOwnProperty("and")) {
-                field = []
-                for (var j = 0; j < filter["and"].length; j++) {
-                    field.push(filter["and"][j]["field"])
+        if (subspaceattr != "") {
+            var f=""
+            if(Array.isArray(dataset[i]["vis"]["title"]["text"])){
+                for(let j of dataset[i]["vis"]["title"]["text"]){
+                    f+=j
                 }
-                if (field.indexOf(subspace) != -1) {
-                    subspace_data.push(dataset[i])
-                }
-            } else {
-                var field = filter["field"]
-                if (subspace == field) {
-                    subspace_data.push(dataset[i])
-                }
+            }else {
+                f=dataset[i]["vis"]["title"]["text"]
+            }
+            if(f.indexOf(subspaceattr)>-1&&f.indexOf(subspacevalue)>-1){
+                 subspace_data.push(dataset[i])
             }
         } else {
             subspace_data.push(dataset[i])
@@ -105,7 +102,7 @@ $("#fliter").on("click", function () {
     })
     for (var i = 0; i < data.length; i++) {
         svg.select("#circle" + data[i].id).style("stroke", "red")
-        svg.select("#circle" + data[i].id).style("stroke-width", 4)
+        svg.select("#circle" + data[i].id).style("stroke-width", 0.5)
     }
 })
 
@@ -128,16 +125,18 @@ $("#queryStoryline").on("click", function () {
 $("#search").on("click", function () {
     var start = document.getElementById("start_fact").value
     var end = document.getElementById("end_fact").value
-    var encoding = document.getElementById("encoding").value
-    var logical = document.getElementById("logical").value
-    var score = document.getElementById("score").value
+    // var encoding = document.getElementById("encoding").value
+    // var logical = document.getElementById("logical").value
+    // var score = document.getElementById("score").value
+    var table = $("#datasetSelect").val()
     $.post("/searchpath", {
         "start": start,
         "end": end,
-        "encoding": encoding,
-        "logical": logical,
-        "score": score,
-        "dataset": JSON.stringify(dataset)
+        // "encoding": encoding,
+        // "logical": logical,
+        // "score": score,
+        "dataset": JSON.stringify(dataset),
+        "table": table
     })
         .done(function (response) {
             // $("#search_result_show").innerHTML=""
@@ -146,6 +145,10 @@ $("#search").on("click", function () {
             let title = '<p class="timer-year"><i class="icon-year"></i><span style="font-size: 16px">' + 'From #' + start + ' to #' + end + '</span></p>'
             $("#search_result_show").append(title)
             for (let i = 0; i < path.length; i++) {
+                // let div = '<div class="month-detail-box" id="searchpath' + path[i].id + '"><span class="month-title">' + path[i].id + '</span></div>'
+                // $("#search_result_show").append(div)
+                // show_vis(path[i], "searchpath" + path[i].id, "search")
+                path[i]["id"] = start + end + i.toString()
                 let div = '<div class="month-detail-box" id="searchpath' + path[i].id + '"><span class="month-title">' + path[i].id + '</span></div>'
                 $("#search_result_show").append(div)
                 show_vis(path[i], "searchpath" + path[i].id, "search")
@@ -180,6 +183,13 @@ $("#submit_facts").on("click", function () {
     document.getElementById("selected_fact_id").value = ""
 
 })
+function compare(p){ //这是比较函数
+    return function(m,n){
+        var a = m[p];
+        var b = n[p];
+        return b - a; //升序
+    }
+}
 
 $("#fliterid").on("click", function () {
     var obj = document.getElementsByName("fact")
@@ -195,5 +205,6 @@ $("#fliterid").on("click", function () {
             data.push(dataset[i])
         }
     }
+    data.sort(compare("score"))
     show_fliter_vis(data)
 })

@@ -44,6 +44,12 @@ class Extractor:
         # subspaceSlice
         self.slice = []
 
+        # subspace num
+        self.num = []
+
+        # slice data
+        self.slice_data = []
+
         # all_subspaceSlice
         self.all_slice = []
 
@@ -65,15 +71,13 @@ class Extractor:
         attributes = self.table.columns
         self.getLabelAttr(attributes)
         # print(self.attrLabel)
-        self.slice = self.getSubspace()
+        self.getSubspace()
         self.all_slice = self.slice
+        print(self.slice)
         # self.all_slice = self.getSubspace()
         # self.all_slice = self.get_all_Subspace()
-        for i in self.slice:
-            print(i)
-        print(len(self.slice))
         self.factData, self.all_factData = self.getFactData()
-        print(len(self.factData))
+        # print(self.factData)
 
     # 给列属性定义类别
     def getLabelAttr(self, attributes):
@@ -102,9 +106,8 @@ class Extractor:
     def getSubspace(self):
 
         # Threshold for number of items
-        threshold = 10
+        threshold = 2
 
-        slice = []
         # print(self.table['MPG'])
         # Equally spaced binning of numeric data
         # print(pd.cut(self.table['MPG'],4,labels=['Q1','Q2','Q3','Q4']))
@@ -121,13 +124,37 @@ class Extractor:
 
         for key in key_list:
             if self.attrLabel.get(key) == "Q":
-                slice.append([{key: "Q1"}])
-                slice.append([{key: "Q2"}])
-                slice.append([{key: "Q3"}])
+                table = copy.deepcopy(self.table)
+                table["binned" + key] = pd.cut(table[key], 3, labels=['Q1', 'Q2', 'Q3'])
+                if key=="Range":
+                    print(table)
+                    print(table.groupby(["binned" + key]).size()["Q1"])
+                    print(table.groupby(["binned" + key]).size()["Q2"])
+                    print(table.groupby(["binned" + key]).size()["Q3"])
+
+                if table.groupby(["binned" + key]).size()["Q1"] > threshold:
+                    self.slice.append([{key: "Q1"}])
+                    self.num.append(table.groupby(["binned" + key]).size()["Q1"])
+                    Table = copy.deepcopy(table[table["binned" + key] == "Q1"])
+                    self.slice_data.append(Table)
+                if table.groupby(["binned" + key]).size()["Q2"] > threshold:
+                    self.slice.append([{key: "Q2"}])
+                    Table = copy.deepcopy(table[table["binned" + key] == "Q2"])
+                    self.slice_data.append(Table)
+                    self.num.append(table.groupby(["binned" + key]).size()["Q2"])
+                if table.groupby(["binned" + key]).size()["Q3"] > threshold:
+                    self.slice.append([{key: "Q3"}])
+                    Table = copy.deepcopy(table[table["binned" + key] == "Q3"])
+                    self.slice_data.append(Table)
+                    self.num.append(table.groupby(["binned" + key]).size()["Q3"])
             else:
                 for value in set(list(self.table[key])):
-                    if self.table.groupby([key]).size()[value] > threshold:
-                        slice.append([{key: value}])
+                    table = copy.deepcopy(self.table)
+                    if table.groupby([key]).size()[value] > threshold:
+                        self.slice.append([{key: value}])
+                        table = table[table[key] == value]
+                        self.slice_data.append(table)
+                        self.num.append(self.table.groupby([key]).size()[value])
 
         # pairwise combination of properties
         for keyBinary in combinations(key_list, 2):
@@ -173,8 +200,9 @@ class Extractor:
                         else:
                             flag = 1
                 if len(list(table[column])) > threshold and flag == 0:
-                    slice.append(fs)
-        return slice
+                    self.slice.append(fs)
+                    self.slice_data.append(table)
+                    self.num.append(len(list(table[column])))
 
     # to get subspace set
     def get_all_Subspace(self):
@@ -235,7 +263,8 @@ class Extractor:
         # Combining observation attributes and subspace slices
         id = 0
         for attr in obverAttr:
-            for slice in self.slice:
+            for i in range(len(self.slice)):
+                slice = self.slice[i]
                 keys = []
                 values = []
                 for element in slice:
@@ -268,7 +297,8 @@ class Extractor:
                         if self.attrLabel.get(key) == "T":
                             type += self.attrLabel.get(key)
                             Attr.append(key)
-                    factData.append({"id": id, "type": type, "obverAttr": Attr, "slice": slice})
+                    factData.append({"id": id, "type": type, "obverAttr": Attr, "slice": slice, "num": self.num[i],
+                                     "slice_data": self.slice_data[i]})
                     id += 1
         # id = 0
         # for attr in obverAttr:
@@ -294,12 +324,58 @@ class Extractor:
         # print("factData Size: ", len(factData))
         return factData, factData
 
+    def checkFactType(self, factdata):
+        type = factdata['type']
+        slice = factdata['slice']
+        if type == 'QN':
+            for s in slice:
+                if self.attrLabel[list(s.keys())[0]] == 'N':
+                    factdata['type'] = factdata['type'].replace('N', '', 1)
+                    factdata['obverAttr'].remove(list(s.keys())[0])
+        elif type == 'QT':
+            for s in slice:
+                if self.attrLabel[list(s.keys())[0]] == 'T':
+                    factdata['type'] = factdata['type'].replace('T', '', 1)
+                    factdata['obverAttr'].remove(list(s.keys())[0])
+        elif type == 'QNN':
+            for s in slice:
+                if self.attrLabel[list(s.keys())[0]] == 'N':
+                    factdata['type'] = factdata['type'].replace('N', '', 1)
+                    factdata['obverAttr'].remove(list(s.keys())[0])
+        elif type == 'QQT':
+            for s in slice:
+                if self.attrLabel[list(s.keys())[0]] == 'T':
+                    factdata['type'] = factdata['type'].replace('T', '', 1)
+                    factdata['obverAttr'].remove(list(s.keys())[0])
+        elif type == 'QNT':
+            for s in slice:
+                if self.attrLabel[list(s.keys())[0]] == 'T':
+                    factdata['type'] = factdata['type'].replace('T', '', 1)
+                    factdata['obverAttr'].remove(list(s.keys())[0])
+                elif self.attrLabel[list(s.keys())[0]] == 'N':
+                    factdata['type'] = factdata['type'].replace('N', '', 1)
+                    factdata['obverAttr'].remove(list(s.keys())[0])
+        return factdata
+
+    def checkFactTask(self, task, factdata):
+        slice_data = factdata['slice_data']
+        obverAttr = factdata['obverAttr']
+        if task == 'proportion':
+            for k in obverAttr:
+                if self.attrLabel[k] == 'N':
+                    data = set(list(slice_data[k]))
+                    if len(data) <= 1 or len(data) >= 8:
+                        return False
+                    else:
+                        return True
+        return True
+
     def getVisList(self):
         visList = {}
-        train_visList = {}
         # encoding_visList={}
         for factdata in self.factData:
-            vis_objects = list()
+
+            factdata = self.checkFactType(factdata)
             # For each combination, there are multiple design solutions, e.g. histogram or strip plot for a "quantitative (Q)" attribute
             # type = ""
             # if factdata.get('type') in designSpace:
@@ -309,6 +385,7 @@ class Extractor:
             #     factdata['obverAttr'] = list(reversed(factdata.get('obverAttr')))
 
             # For each datafact, there are multiple design solutions, e.g. histogram or strip plot for a "quantitative (Q)" attribute
+
             if factdata.get('type') in designSpace:
                 type = factdata.get('type')
                 for d_counter in range(len(designSpace[type]["designs"])):
@@ -316,11 +393,14 @@ class Extractor:
                     design = copy.deepcopy(designSpace[type]["designs"][d_counter])
 
                     task = design["task"]
-                    # Generate Vega-Lite specification along with it"s relevance score for the attribute and task combination.
-                    vl_genie = self.getVis(design, type, factdata.get('obverAttr'), factdata.get('slice'))
-                    text = self.getText(design, type, factdata.get('obverAttr'), factdata.get('slice'))
-                    visList[str(factdata.get('id')) + '-' + str(d_counter)] = {"task": task, "vis": vl_genie.vl_spec,
-                                                                               "text": text}
+
+                    if self.checkFactTask(task, factdata):
+                        # Generate Vega-Lite specification along with it"s relevance score for the attribute and task combination.
+                        vl_genie = self.getVis(design, type, factdata.get('obverAttr'), factdata.get('slice'))
+                        text = self.getText(design, type, factdata.get('obverAttr'), factdata.get('slice'))
+                        visList[str(factdata.get('id')) + '-' + str(d_counter)] = {"task": task,
+                                                                                   "vis": vl_genie.vl_spec,
+                                                                                   "text": text}
                     # encoding_visList[str(factdata.get('id')) + '-' + str(d_counter)] = {"task": task, "vis": vl_genie.vl_spec}
         # for factdata in self.all_factData:
         #     vis_objects = list()
@@ -356,7 +436,7 @@ class Extractor:
             vis_file.write(new_visList)
 
         # Generate datasets for variational coding
-        print(len(visList))
+        # print(len(visList))
         with open(self.encoding_input_path, 'w') as vae_file:
             for key in visList:
                 spec = visList.get(key)["vis"]
@@ -370,7 +450,7 @@ class Extractor:
                 vae_file.write(json.dumps(spec) + "\n")
 
         # Generate datasets for variational coding training
-        print(train_visList)
+        # print(train_visList)
         with open(self.train_data_path, 'w') as vae_file:
             for key in train_visList:
                 spec = train_visList.get(key)["vis"]
@@ -457,7 +537,7 @@ class Extractor:
                     f += key + " = " + "high level, "
                 filters.append({key: [min(data), max(data)]})
             else:
-                f += key + " = " + value + ", "
+                f += key + " = " + str(value) + ", "
                 filters.append({key: value})
 
         table = self.table.copy()

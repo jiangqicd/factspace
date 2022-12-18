@@ -7,11 +7,6 @@ In FactExplorer, what users need to do is not low-level data analysis, but advan
 ![](https://github.com/jiangqicd/factspace/blob/main/pipline.png)
 FactExplorer, a system designed to help users efficiently and conveniently explore and analyze fact space. In this system, entire facts are automatically extracted from tabular data. A two-factor (visual style and contextual logic) fact embedding approach is introduced to embed facts into the fact space, which provides an overview of all facts and the context of each fact. A multi-perspective storyline generation algorithm is also designed to generate multiple perspectives storylines. The whole facts are well organized to promote exploration and deepen the impression of the fact space for users. Certain interactive components are also implemented to support users to flexibly edit facts and storylines.
 
-## System screenshot
-The interface of FactExplorer, which includes four major views: A is the navigation view, B is the fact space overview view, C is the storyline editor view, and D is the path searching view.
-![](https://github.com/jiangqicd/factspace/blob/main/overview.png)
-FactExplorer system demonstration video address：https://youtu.be/mfATC2AYuZo
-
 ## **Function description**
 1. ##### Data fact Extraction
 

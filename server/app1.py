@@ -1,4 +1,7 @@
 import pandas as pd
+from threading import Thread
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
+from werkzeug.serving import run_simple
 import json
 from flask import Flask, jsonify, request, Blueprint, render_template, abort, send_from_directory,current_app
 from jinja2 import TemplateNotFound
@@ -26,6 +29,8 @@ from pandas.api.types import is_numeric_dtype
 # Initialize the app
 app = Flask(__name__)
 app.jinja_env.auto_reload = True
+app_baseline = Flask(__name__)
+app_baseline.jinja_env.auto_reload = True
 
 
 @app.route('/searchpath', methods=['POST'])
@@ -109,7 +114,7 @@ def storyline():
     return json.dumps({"storyline": [], "dataset": dataset, "top_k": []})
 
 
-@app.route('/scatter', methods=['POST'])
+@app_baseline.route('/scatter', methods=['POST'])
 def scatter():
     time = ['year', 'time', 'date', 'day', 'week', 'month']
 
@@ -268,15 +273,16 @@ def adjust_scatter():
     return json.dumps(data)
 
 
-@app.route('/', methods=['GET'])
-def application_homepage():
+
+@app_baseline.route('/', methods=['GET'])
+def baseline_homepage():
     try:
-        return render_template('datafact.html')
-        # return render_template('baseline.html')
+        # return render_template('datafact.html')
+        return render_template('baseline.html')
     except TemplateNotFound:
         abort(404)
 
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True, threaded=True, port=7001)
+    app_baseline.run(host='0.0.0.0', debug=True, threaded=True, port=7005)

@@ -44,82 +44,96 @@
                     <option value="euro.csv">Euro</option>
                     <option value="economic.csv">Economic</option>
                     <option value="bill.csv">Bill</option>
-                    <option value="pubg.csv">Pubg</option>
-                     <option value="happiness.csv" selected="selected">Happiness</option>
+                    <option value="pubg.csv" selected="selected">Pubg</option>
+                     <option value="happiness.csv">Happiness</option>
+                     <option value="vaccine_correlation.csv">Vaccine</option>
                 </select>
             </span>
             </div>
             <div class="col-md-11" style="padding-top: 2px;">
-                <button type="button" id="queryStoryline" style="height: 35px;color: #b3de69;float: left">
-                    Storyline
-                </button>
-                <div style="float: left;padding-top: 5px;padding-left: 10px;">
-                    <label style="color: #cad3d0;float: left;font-size: 18px">Expansion:</label>
-                </div>
-                <div style="float: left;padding-top: 5px;padding-left: 5px;">
-                    <input type="checkbox" style="width: 15px;height: 15px;" name="distance" id="low">
-                    <label style="font-size: 15px;color: #8dd3c7">Low</label>
-                </div>
-                <div style="float: left;padding-left: 5px;padding-top: 5px">
-                    <input type="checkbox" style="width: 15px;height: 15px;" name="distance" id="medium">
-                    <label style="font-size: 15px;color: #8dd3c7">Medium</label>
-                </div>
-                <div style="float: left;padding-left: 5px;padding-top: 5px">
-                    <input type="checkbox" style="width: 15px;height: 15px;" name="distance" id="high">
-                    <label style="font-size: 15px;color: #8dd3c7">High</label>
-                </div>
-                <div style="float: left;padding-left: 5px;padding-top: 5px">
-                    <label style="color: #cad3d0;float: left;font-size: 18px">P:</label>
-                    <input id="custom" type="text" name="custom perspective" value="44-0"
-                           style="width: 60px">
-                </div>
-                <div style="float: left;padding-left: 10px;padding-top: 5px">
+                {#                <button type="button" id="queryStoryline" style="height: 35px;color: #b3de69;float: left">#}
+                {#                    Storyline#}
+                {#                </button>#}
+                {#                <div style="float: left;padding-top: 5px;padding-left: 10px;">#}
+                {#                    <label style="color: #cad3d0;float: left;font-size: 18px">Expansion:</label>#}
+                {#                </div>#}
+                {#                <div style="float: left;padding-top: 5px;padding-left: 5px;">#}
+                {#                    <input type="checkbox" style="width: 15px;height: 15px;" name="distance" id="low">#}
+                {#                    <label style="font-size: 15px;color: #8dd3c7">Low</label>#}
+                {#                </div>#}
+                {#                <div style="float: left;padding-left: 5px;padding-top: 5px">#}
+                {#                    <input type="checkbox" style="width: 15px;height: 15px;" name="distance" id="medium">#}
+                {#                    <label style="font-size: 15px;color: #8dd3c7">Medium</label>#}
+                {#                </div>#}
+                {#                <div style="float: left;padding-left: 5px;padding-top: 5px">#}
+                {#                    <input type="checkbox" style="width: 15px;height: 15px;" name="distance" id="high">#}
+                {#                    <label style="font-size: 15px;color: #8dd3c7">High</label>#}
+                {#                </div>#}
+                {#                <div style="float: left;padding-left: 5px;padding-top: 5px">#}
+                {#                    <label style="color: #cad3d0;float: left;font-size: 18px">P:</label>#}
+                {#                    <input id="custom" type="text" name="custom perspective" value="44-0"#}
+                {#                           style="width: 60px">#}
+                {#                </div>#}
+                <div style="float: left;padding-left: 40px;padding-top: 5px">
                     <label style="color: #cad3d0;float: left;font-size: 18px">Attribute_1:</label>
                     <span>
                          <select id="attributes1Select" style="height: 30px;width:120px;float: left"></select>
                      </span>
                 </div>
-                <div style="float: left;padding-left: 5px;padding-top: 5px">
+                <div style="float: left;padding-left: 25px;padding-top: 5px">
                     <label style="color: #cad3d0;float: left;font-size: 18px">Attribute_2:</label>
                     <span>
                          <select id="attributes2Select" style="height: 30px;width:120px;float: left"></select>
                      </span>
                 </div>
-                <div style="float: left;padding-left: 5px;padding-top: 5px">
-                    <label style="color: #cad3d0;float: left;font-size: 18px">Subspace:</label>
+                <div style="float: left;padding-left: 25px;padding-top: 5px">
+                    <label style="color: #cad3d0;float: left;font-size: 18px">S_Attr:</label>
                     <span>
-                         <select id="subspaceSelect" style="height: 30px;width:120px;float: left"></select>
+                         <select id="subspaceattrSelect" style="height: 30px;width:120px;float: left"></select>
                      </span>
                 </div>
-                <div style="float: left;padding-left: 5px;padding-top: 5px">
+                <div style="float: left;padding-left: 25px;padding-top: 5px">
+                    <label style="color: #cad3d0;float: left;font-size: 18px">S_Value:</label>
+                    <span>
+                         <select id="subspacevalueSelect" style="height: 30px;width:120px;float: left"></select>
+                     </span>
+                </div>
+                <div style="float: left;padding-left: 25px;padding-top: 5px">
                     <label style="color: #cad3d0;float: left;font-size: 18px">Task:</label>
                     <span>
                          <select id="tasksSelect" style="height: 30px;width:120px;float: left"></select>
                      </span>
                 </div>
-                <div style="float: left;padding-left: 5px;padding-top: 5px">
+                <div style="float: left;padding-left: 25px;padding-top: 5px">
                     <label style="color: #cad3d0;float: left;font-size: 18px">Score:</label>
                     <span>
                          <select id="scoreSelect" style="height: 30px;width:120px;float: left"></select>
                      </span>
                 </div>
-                <div style="float: left;padding-left: 5px;padding-top: 5px">
+                <div style="float: left;padding-left: 25px;padding-top: 5px">
                     <label style="color: #cad3d0;float: left;font-size: 18px">ID:</label>
                     <input id="idsearch" type="text" name="custom perspective" value="44-0"
                            style="width: 60px">
                 </div>
-                <div style="float: left;padding-top: 5px;padding-left: 5px;">
+                <div style="float: left;padding-top: 5px;padding-left: 65px;">
                     <button type="button" id="fliter" style="height: 30px;color: #384ade;float: left">
                         Filter
                     </button>
+                </div>
+                <div style="float: left;padding-top: 5px;padding-left: 30px;">
                     <button type="button" id="remove" style="height: 30px;color: #384ade;float: left">
                         Remove
                     </button>
                 </div>
-                <div style="padding-left: 100px;float: left">
-                 <button class="btn btn-success " type="button" id="queryBtn">
-                    Submit
-                </button>
+                <div style="padding-left: 53px;float: left">
+                    <button class="btn btn-success " type="button" id="weight">
+                        Reset
+                    </button>
+                </div>
+                <div style="padding-left: 30px;float: left">
+                    <button class="btn btn-success " type="button" id="queryBtn">
+                        Submit
+                    </button>
                 </div>
             </div>
         </div>
@@ -134,7 +148,7 @@
                 </div>
                 <div style="height: 150px;border:1px solid #ADADAD;">
                     <span class="title" style="font-weight:bold">task distribution</span>
-                     <div id="task_dis"></div>
+                    <div id="task_dis"></div>
                 </div>
                 <div style="height: 150px;border:1px solid #ADADAD">
                     <span class="title" style="font-weight:bold">mark distribution</span>
@@ -293,45 +307,44 @@
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <center><h3 class="panel-title">
-                        Storyline Search
+                        Transition Path Search
                     </h3></center>
                 </div>
                 <div id="searchview" style="overflow:auto;height: 1000px">
                     <label>Input fact source and fact target:</label>
-                    <div style="padding-top:10px;float: left;display: inline;">
-                        <div style="float: left;display: inline">
-                            <label style="color: #beaed4">Encoding:</label>
-                            <img src="../static/img/encoding.png" style="max-width: 30px;max-height: 30px">
-                            <input id="encoding" type="text" name="encoding" value="0.5" style="width: 40px"><br/>
-                        </div>
-                        <div style="float: left;display: inline;padding-left: 5px">
-                            <label style="color: #fdc086">Logical:</label>
-                            <img src="../static/img/logic.png" style="max-width: 30px;max-height: 30px">
-                            <input id="logical" type="text" name="logical" value="0.5" style="width: 40px"><br/>
-                        </div>
-                        <div style="float: left;display: inline;padding-left: 5px">
-                            <label style="color: #ffd92f">Score:</label>
-                            <img src="../static/img/score.png" style="max-width: 30px;max-height: 30px">
-                            <input id="score" type="text" name="score" value="0.5" style="width: 40px"><br/>
-                        </div>
-                    </div>
-                    <div style="padding-top:10px;float: left;display: inline;border-bottom: 3px solid #ADADAD;">
+                    {#                    <div style="padding-top:10px;float: left;display: inline;">#}
+                    {#                        <div style="float: left;display: inline">#}
+                    {#                            <label style="color: #beaed4">Encoding:</label>#}
+                    {#                            <img src="../static/img/encoding.png" style="max-width: 30px;max-height: 30px">#}
+                    {#                            <input id="encoding" type="text" name="encoding" value="0.5" style="width: 40px"><br/>#}
+                    {#                        </div>#}
+                    {#                        <div style="float: left;display: inline;padding-left: 5px">#}
+                    {#                            <label style="color: #fdc086">Logical:</label>#}
+                    {#                            <img src="../static/img/logic.png" style="max-width: 30px;max-height: 30px">#}
+                    {#                            <input id="logical" type="text" name="logical" value="0.5" style="width: 40px"><br/>#}
+                    {#                        </div>#}
+                    {#                        <div style="float: left;display: inline;padding-left: 5px">#}
+                    {#                            <label style="color: #ffd92f">Score:</label>#}
+                    {#                            <img src="../static/img/score.png" style="max-width: 30px;max-height: 30px">#}
+                    {#                            <input id="score" type="text" name="score" value="0.5" style="width: 40px"><br/>#}
+                    {#                        </div>#}
+                    {#                    </div>#}
+                    <div style="padding-top:10px;width: 510px;float: left;display: inline;border-bottom: 3px solid #ADADAD;">
                         <div style="float: left;display: inline">
                             <label style="color: #7fc97f">Source:</label>
                             <img src="../static/img/start.png" style="max-width: 30px;max-height: 30px">
                             <input id="start_fact" type="text" name="start" value="14-0" style="width: 80px"><br/>
                         </div>
-                        <div style="float: left;display: inline;padding-left: 10px">
+                        <div style="float: left;display: inline;padding-left: 40px">
                             <label style="color: #f0027f">Target:</label>
                             <img src="../static/img/end.png" style="max-width: 30px;max-height: 30px">
                             <input id="end_fact" type="text" name="end" value="44-0" style="width: 80px"><br/>
                         </div>
-                        <div style="float: left;padding-left: 20px">
-                            <button class="btn btn-default " style="height: 30px" type="button" id="search">
+                        <div style="float: left;padding-left: 55px">
+                            <button class="btn btn-default " style="height: 30px;width: 60px" type="button" id="search">
                                 Go
                             </button>
                         </div>
-
                     </div>
                     <div class="timer-shaft-content">
                         <div class="shaft-detail-cont" id="search_result_show" style="display: block;">
@@ -357,11 +370,16 @@
 <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
 <script src="https://cdn.jsdelivr.net/npm/vega-lite@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+<script src="https://unpkg.com/d3-arrow@0.0.25/dist/d3-arrow.min.js"></script>
+<script src="../static/js/global.js"></script>
+<script src="../static/js/topic.js"></script>
+<script src="../static/js/d3-context-menu.js"></script>
+<script src="../static/js/tsne.js"></script>
+<script src="../static/js/overview.js"></script>
 <script src="../static/js/lib.js"></script>
 <script src="../static/js/click.js"></script>
 <script src="../static/js/navigation.js"></script>
 <script src="../static/js/sankey.js"></script>
-<script src="../static/js/global.js"></script>
 <script src="../static/js/main.js"></script>
 <script src="../static/js/ui.js" z></script>
 <script src="../static/js/utils.js"></script>
