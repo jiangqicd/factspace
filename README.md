@@ -1,12 +1,11 @@
-# FactExplorer: Towards Better Narrative for Tabular Data through Interactive Fact Embedding
+# FE2DA: Fact Embedding-based Exploratory Data Analysis for Tabular Data
 
 This repository contains source code used to explore and analyze the fact space in tabular data!
 
 ## Introduction
-In FactExplorer, what users need to do is not low-level data analysis, but advanced fact space exploration. The workflow of the system is as follow.
+In FactExplorer, what users need to do is not low-level data analysis, but advanced data fact exploration. The framework of FactExplorer is as follow, which consists of threecore modules: fact extraction, fact embedding, and fact exploration.
 ![](https://github.com/jiangqicd/factspace/blob/main/pipline.png)
-FactExplorer, a system designed to help users efficiently and conveniently explore and analyze fact space. In this system, entire facts are automatically extracted from tabular data. A two-factor (visual style and contextual logic) fact embedding approach is introduced to embed facts into the fact space, which provides an overview of all facts and the context of each fact. A multi-perspective storyline generation algorithm is also designed to generate multiple perspectives storylines. The whole facts are well organized to promote exploration and deepen the impression of the fact space for users. Certain interactive components are also implemented to support users to flexibly edit facts and storylines.
-
+We present a fact-based frame-work for tabular data analysis. Such framework is top-down and adequately interacting, which allows users to perform an overview-to-detail data exploration. In particular, we first extract data facts from underlying tabular data. These facts are then embedded as semantic vectors and projected into a 2D scatterplot to provide an overview. Finally, FactExplorer also supports two powerful interactive exploration techniques to facilitate insight generation.
 ## **Function description**
 1. ##### Data fact Extraction
 
