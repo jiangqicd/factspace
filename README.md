@@ -5,7 +5,7 @@ This repository contains source code used to explore and analyze the fact space 
 ## Introduction
 In FactExplorer, what users need to do is not low-level data analysis, but advanced data fact exploration. The framework of FactExplorer is as follow, which consists of threecore modules: fact extraction, fact embedding, and fact exploration.
 ![](https://github.com/jiangqicd/factspace/blob/main/pipline.png)
-We present a fact-based frame-work for tabular data analysis. Such framework is top-down and adequately interacting, which allows users to perform an overview-to-detail data exploration. In particular, we first extract data facts from underlying tabular data. These facts are then embedded as semantic vectors and projected into a 2D scatterplot to provide an overview. Finally, FactExplorer also supports two powerful interactive exploration techniques to facilitate insight generation.
+We present a fact-based frame-work for tabular data analysis. Such framework is top-down and adequately interacting, which allows users to perform an overview to detail data exploration. In particular, we first extract data facts from underlying tabular data. These facts are then embedded as semantic vectors and projected into a 2D scatterplot to provide an overview. Finally, FactExplorer also supports two powerful interactive exploration techniques to facilitate insight generation.
 ## **Function description**
 1. ##### Data fact Extraction
 
