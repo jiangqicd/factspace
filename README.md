@@ -1,4 +1,4 @@
-# FE2DA: Fact Embedding-based Exploratory Data Analysis for Tabular Data
+# *FE<sup>2</sup>DA*: Fact Embedding-based Exploratory Data Analysis for Tabular Data
 
 This repository contains source code used to explore and analyze the fact space in tabular data!
 
@@ -137,34 +137,6 @@ We present a fact-based frame-work for tabular data analysis. Such framework is 
 
    ```
    logic_distence=[[0,0.36,0,0.64] , [0,0.32,0.68,0] , ... , [0.33,0.37,0,0.3]]
-   ```
-
-   
-
-3. ##### Storyline generation
-
-   Extract logical embedding via storyGenerator.py
-
-   The generated storyline structure is "perspective_1": ["source": fact_source, "target": fact_target, ...]
-
-   ```
-   [
-     {"perspective_1": [
-        {"source": fact_1, "target": fact_4}, 
-        {"source": fact_7, "target": fact_3}, 
-        {"source": fact_5, "target": fact_9}, 
-           ...
-        {"source": fact_4, "target": fact_2},]
-     },
-       {"perspective_2":[
-        {"source": fact_4, "target": fact_6}, 
-        {"source": fact_7, "target": fact_2}, 
-        {"source": fact_3, "target": fact_9}, 
-           ...
-        {"source": fact_8, "target": fact_1},]
-     },
-     ...
-   ]
    ```
 
 ## **Install**
