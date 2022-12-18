@@ -1,7 +1,7 @@
 # *FE<sup>2</sup>DA*: Fact Embedding-based Exploratory Data Analysis for Tabular Data
 
-This repository contains source code used to explore and analyze the fact space in tabular data!
-
+You can click the link below to watch the demo video!
+[![FE2DA: Fact Embedding-based Exploratory Data Analysis for Tabular Data](https://github.com/jiangqicd/factspace/blob/main/overview.png)](https://youtu.be/R42eONwFETI "FE2DA: Fact Embedding-based Exploratory Data Analysis for Tabular Data")
 ## Introduction
 In FactExplorer, what users need to do is not low-level data analysis, but advanced data fact exploration. The framework of FactExplorer is as follow, which consists of threecore modules: fact extraction, fact embedding, and fact exploration.
 ![](https://github.com/jiangqicd/factspace/blob/main/pipline.png)
