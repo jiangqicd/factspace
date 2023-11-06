@@ -110,6 +110,20 @@ We present a fact-based frame-work for tabular data analysis. Such framework is 
     -0.02154189  0.02161633 -0.0244385  -0.04470274  0.08967581  0.08091462
      0.01759099  0.07417333]
    ```
+   Computing visual-based similarity matrix from GVAE-based features
+   
+$$
+\left[
+\begin{matrix}
+    D_{V}(1,1) & D_{V}(1,2) & \cdots & D_{V}(1,N) \\\\
+    D_{V}(2,1) & D_{V}(2,2) & \cdots & D_{V}(2,N) \\\\
+    \vdots     & \vdots     & \ddots & \vdots     \\\\
+    D_{V}(N,1) & D_{V}(N,2) & \cdots & D_{V}(N,N)
+\end{matrix}
+\right]
+$$
+
+
 
    ###### logical embedding
 
@@ -127,17 +141,34 @@ We present a fact-based frame-work for tabular data analysis. Such framework is 
 
    *logic(m,n)=[ **D**<sub>p</sub> , **D**<sub>g</sub> , **D**<sub>t</sub> , **D**<sub>c</sub>]*
 
+   Logical similarity for each fact
+
    ```python
-   logic_distence=[[0,1,0,1] , [0,1,1,0] , ... , [1,1,0,1]]
+   logical_similarity=[[0,1,0,1] , [0,1,1,0] , ... , [1,1,0,1]]
    ```
 
    Weight different logical relationships
 
-   *logic(m,n)=[ **w**<sub>p</sub> x **D**<sub>p</sub> , **w**<sub>g</sub> x **D**<sub>g</sub> , **w**<sub>t</sub> x **D**<sub>t</sub> , **w**<sub>c</sub>x**D**<sub>c</sub>]*
+   *weighted_similarity(m,n)=[ **w**<sub>p</sub> x **S**<sub>p</sub> , **w**<sub>g</sub> x **S**<sub>g</sub> , **w**<sub>t</sub> x **S**<sub>t</sub> , **w**<sub>c</sub>x**S**<sub>c</sub>]*
+
+   The weighted similarity for each fact
 
    ```
-   logic_distence=[[0,0.36,0,0.64] , [0,0.32,0.68,0] , ... , [0.33,0.37,0,0.3]]
+   weighted_similarity=[[0,0.36,0,0.64] , [0,0.42,0.78,0] , ... , [0.33,0.37,0,0.6]]
    ```
+
+   Logical-based similarity matrix
+
+$$
+\left[
+\begin{matrix}
+    D_{L}(1,1) & D_{L}(1,2) & \cdots & D_{L}(1,N) \\\\
+    D_{L}(2,1) & D_{L}(2,2) & \cdots & D_{L}(2,N) \\\\
+    \vdots     & \vdots     & \ddots & \vdots     \\\\
+    D_{L}(N,1) & D_{L}(N,2) & \cdots & D_{L}(N,N)
+\end{matrix}
+\right] 
+$$
 
 ## **Install**
 The FactExplorer code has a few dependencies that can be installed using the requirement.txt file.
