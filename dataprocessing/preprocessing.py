@@ -6,6 +6,7 @@
 # @file: preprocessing.py
 # @time: 2022/2/27 15:55
 from sklearn.cluster import DBSCAN
+from sklearn.metrics import pairwise_distances
 import numpy as np
 import pandas as pd
 from sklearn.manifold import TSNE
@@ -37,7 +38,7 @@ def distance_compution(Path):
         vec_path = "../server/static/data/vec_" + path + ".json"
         vis_display_vegalite_data_path = "../server/static/vis/" + path + ".json"
 
-        tsne = TSNE(n_components=2)
+        tsne = TSNE(n_components=2, perplexity=25)
         pca20 = PCA(n_components=20)
 
         with open(vis_display_vegalite_data_path, 'r') as load_f:
@@ -50,13 +51,13 @@ def distance_compution(Path):
 
         standard = preprocessing.MinMaxScaler()
 
-        logic_distence_matrix_org = list(standard.fit_transform(logic_distence_matrix_org))
+        logic_distence_matrix_org_standard = list(standard.fit_transform(logic_distence_matrix_org))
 
-        logic_distence_matrix = pca20.fit_transform(logic_distence_matrix_org)
+        logic_distence_matrix = pca20.fit_transform(logic_distence_matrix_org_standard)
 
         logic_distence_matrix = list(standard.fit_transform(logic_distence_matrix))
 
-        ld = tsne.fit_transform(logic_distence_matrix_org)
+        ld = tsne.fit_transform(logic_distence_matrix_org_standard)
 
         ld = list(standard.fit_transform(ld))
 
@@ -83,9 +84,18 @@ def distance_compution(Path):
 
         ed = list(standard.fit_transform(ed))
 
-        comb_dis = np.concatenate((np.array(z) * 0.5, np.array(logic_distence_matrix) * 0.5), axis=1)
+        z = list(standard.fit_transform(z))
 
-        d = tsne.fit_transform(comb_dis)
+        visual_distence_matrix = pairwise_distances(z, metric='euclidean')
+
+        visual_distence_matrix = 1 / (visual_distence_matrix + 1)
+
+        visual_distence_matrix_standard = list(standard.fit_transform(visual_distence_matrix))
+
+        comb_dis_n_standard = 0.5 * np.array(visual_distence_matrix_standard) + 0.5 * np.array(
+            logic_distence_matrix_org_standard)
+
+        d = tsne.fit_transform(comb_dis_n_standard)
         d = list(standard.fit_transform(d))
 
         logical_dis = {}
@@ -96,7 +106,7 @@ def distance_compution(Path):
             distance[k] = {"x": str(d[i][0]), "y": str(d[i][1])}
             logical_dis[k] = {"lx": str(ld[i][0]), "ly": str(ld[i][1])}
             visual_dis[k] = {"ex": str(ed[i][0]), "ey": str(ed[i][1])}
-            vec[k] = {"ld_vec": str(list(logic_distence_matrix[i])), "ed_vec": str(list(z[i]))}
+            vec[k] = {"ld_vec": str(list(logic_distence_matrix_org_standard[i])), "ed_vec": str(list(visual_distence_matrix_standard[i]))}
 
         logical_dis = json.dumps(logical_dis, indent=4)
         visual_dis = json.dumps(visual_dis, indent=4)

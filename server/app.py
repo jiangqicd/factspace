@@ -251,7 +251,7 @@ def adjust_scatter():
         ed_vec.append(eval(vec[id]["ed_vec"]))
         ld_vec.append(eval(vec[id]["ld_vec"]))
     comb_dis = np.concatenate((np.array(ed_vec) * we, np.array(ld_vec) * wl), axis=1)
-    tsne = TSNE(n_components=2)
+    tsne = TSNE(n_components=2, perplexity=25)
     d = tsne.fit_transform(comb_dis)
     # umap = UMAP(random_state=42)
     # d = umap.fit_transform(comb_dis)
