@@ -170,6 +170,12 @@ $$
 \right] 
 $$
 
+  ###### feature aggregation
+
+   The final inter-fact similarity is obtained by weighted summation of logical-based and visual-based features 
+
+   *final_similarity(m,n)= **w**<sub>logical</sub> x **S**<sub>logical</sub>(m,n) + **w**<sub>visual</sub> x **S**<sub>visual</sub>(m,n)*
+
 ## **Install**
 The FactExplorer code has a few dependencies that can be installed using the requirement.txt file.
 
